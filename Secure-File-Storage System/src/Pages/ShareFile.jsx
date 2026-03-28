@@ -4,7 +4,9 @@ const SharePage = () => {
   const { shareId } = useParams();
 
   const downloadFile = () => {
-    window.open(`http://localhost:5000/api/files/public/${shareId}`);
+    window.open(
+      `https://mern-project-4-ihvs.onrender.com/api/files/public/${shareId}`,
+    );
   };
 
   return (

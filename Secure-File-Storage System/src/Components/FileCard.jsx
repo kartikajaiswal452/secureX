@@ -22,7 +22,7 @@ const FileCard = ({ file, onDelete }) => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/files/download/${file._id}`,
+        `https://mern-project-4-ihvs.onrender.com/api/files/download/${file._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ const FileCard = ({ file, onDelete }) => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/files/share/${file._id}`,
+        `https://mern-project-4-ihvs.onrender.com/api/files/download/${file._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ const FileCard = ({ file, onDelete }) => {
     <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-gray-800 shadow-lg transition transform hover:-translate-y-1 hover:shadow-2xl">
       {isImage ? (
         <img
-          src={`http://localhost:5000/${file.path}`}
+          src={`https://mern-project-4-ihvs.onrender.com/${file.path}`}
           alt={file.filename}
           className="h-36 w-full object-cover rounded-xl mb-3 transition hover:scale-105"
         />

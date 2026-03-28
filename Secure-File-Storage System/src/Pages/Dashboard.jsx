@@ -11,11 +11,14 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const fetchFiles = async () => {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/api/files", {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      "https://mern-project-4-ihvs.onrender.com/api/files",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     const data = await res.json();
     console.log("Fetched files:", data);
     if (Array.isArray(data)) {
@@ -40,13 +43,16 @@ const Dashboard = () => {
       for (let file of selectedFiles) {
         const formData = new FormData();
         formData.append("file", file);
-        await fetch("http://localhost:5000/api/files/upload", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
+        await fetch(
+          "https://mern-project-4-ihvs.onrender.com/api/files/upload",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
           },
-          body: formData,
-        });
+        );
       }
       alert("Files uploaded");
       fetchFiles();
@@ -70,13 +76,16 @@ const Dashboard = () => {
       for (let file of droppedFiles) {
         const formData = new FormData();
         formData.append("file", file);
-        await fetch("http://localhost:5000/api/files/upload", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
+        await fetch(
+          "https://mern-project-4-ihvs.onrender.com/api/files/upload",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
           },
-          body: formData,
-        });
+        );
       }
       fetchFiles();
     } catch (err) {
@@ -86,7 +95,7 @@ const Dashboard = () => {
   const handleDelete = async (id) => {
     const token = localStorage.getItem("token");
     try {
-      await fetch(`http://localhost:5000/api/files/${id}`, {
+      await fetch(`https://mern-project-4-ihvs.onrender.com/api/files/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
