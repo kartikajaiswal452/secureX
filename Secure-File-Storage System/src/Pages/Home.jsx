@@ -43,24 +43,24 @@ const Home = () => {
         <span className="text-orange-500 text-center text-2xl">
           We ensure your file security
         </span>
-        <h1 className="text-center text-6xl text-white mt-2 ">
-          Secure File Storage System
-          <span className="block overflow-hidden whitespace-nowrap text-4xl  mt-2">
-            <span className=" bg-orange-500/20 rounded">
-              Store. Protect. Share
-            </span>{" "}
-            — All in One Place
-          </span>
-          <p className="text-xl p-10 mt-5">
-            Welcome to a modern and secure file management system designed to
-            keep your data safe while making sharing effortless. This platform
-            allows users to upload, manage, encrypt, and share files with
-            complete control and privacy.
-          </p>
+        <h1 className="text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mt-2 ">
+          Secure File Storage System{" "}
         </h1>
+        <span className=" block text-2xl sm:text-3xl mt-2 text-center text-white">
+          <span className=" bg-orange-500/20 rounded">
+            Store. Protect. Share
+          </span>{" "}
+          — All in One Place
+        </span>
+        <p className="text-sm sm:text-base md:text-lg p-4 sm:p-6 md:p-10 mt-3 text-center text-gray-200 max-w-3xl">
+          Welcome to a modern and secure file management system designed to keep
+          your data safe while making sharing effortless. This platform allows
+          users to upload, manage, encrypt, and share files with complete
+          control and privacy.
+        </p>
       </div>
       <div className="bg-black rounded max-w-5xl mx-auto p-4 hover:border border-blue-300">
-        <div className=" grid md:grid-cols-3 gap-6">
+        <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           <div className="bg-[#111] rounded-2xl p-6 border border-gray-800 hover:border-indigo-500 transition">
             <h3 className="text-xl font-semibold mb-2 text-white">
               🔹 Secure File Upload

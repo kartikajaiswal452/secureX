@@ -1,26 +1,36 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import bgimage1 from "../assets/Image/zulfugar-karimov-2_rlRMukZO4-unsplash.jpg";
 const Register = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleregister = async (e) => {
     e.preventDefault();
-    const res = await fetch(
-      "https://mern-project-4-ihvs.onrender.com/api/auth/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    try {
+      const res = await fetch(
+        "https://mern-project-4-ihvs.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         },
-        body: JSON.stringify({ email, password }),
-      },
-    );
+      );
 
-    const data = await res.json();
-    alert(data.message);
+      const data = await res.json();
+      alert(data.message);
+
+      if (res.ok) {
+        navigate("/login");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong!");
+    }
   };
-
   return (
     <div
       className="h-screen w-full flex items-center justify-center bg-cover bg-no-repeat bg-center"
