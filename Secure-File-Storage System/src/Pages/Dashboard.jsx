@@ -3,97 +3,152 @@ import FileCard from "../Components/FileCard";
 import { useNavigate } from "react-router-dom";
 import { CiFileOn } from "react-icons/ci";
 import bgimage2 from "../assets/Image/dashboard.jpg";
+
 const Dashboard = () => {
   const [files, setFiles] = useState([]);
   const [dragactive, setDragactive] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+
   const navigate = useNavigate();
-  const fetchFiles = async () => {
+
+  const getToken = () => {
     const token = localStorage.getItem("token");
+    if (!token || token === "undefined" || token === "null") {
+      return null;
+    }
+    return token;
+  };
+
+  const fetchFiles = async () => {
+    const token = getToken();
+
+    if (!token) {
+      console.log("No token → redirect");
+      navigate("/Login");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        "https://mern-project-4-ihvs.onrender.com/api/files",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (res.status === 401) {
+        console.log("Unauthorized (token invalid or expired)");
+        return; // ❗ DO NOT auto logout
+      }
+
+      const data = await res.json();
+      setFiles(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchFiles();
+    }, 300); // small delay prevents race condition
+
+    return () => clearTimeout(timer);
+  }, []);
+  const encryptAndUpload = async (file, password, token) => {
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("password", password);
+
     const res = await fetch(
-      "https://mern-project-4-ihvs.onrender.com/api/files",
+      "https://mern-project-4-ihvs.onrender.com/api/files/upload",
       {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        body: formData,
       },
     );
-    const data = await res.json();
-    console.log("Fetched files:", data);
-    if (Array.isArray(data)) {
-      setFiles(data);
-    } else {
-      console.error(data);
-      setFiles([]);
-    }
+
+    return await res.json();
   };
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/");
-    } else {
-      fetchFiles();
-    }
-  }, [navigate]);
+
   const handleupload = async (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    const token = localStorage.getItem("token");
+    const selectedFiles = Array.from(e.target.files || []);
+    const token = getToken();
+
+    if (!token) {
+      navigate("/Login");
+      return;
+    }
+    const password = prompt("Enter password");
+    if (!password) return;
+
     try {
       for (let file of selectedFiles) {
-        const formData = new FormData();
-        formData.append("file", file);
-        await fetch(
-          "https://mern-project-4-ihvs.onrender.com/api/files/upload",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-          },
-        );
+        if (!file) continue;
+        await encryptAndUpload(file, password, token);
       }
-      alert("Files uploaded");
+
+      alert("Encrypted upload complete 🔐");
       fetchFiles();
     } catch (err) {
       console.error(err);
     }
   };
+
+  // ✅ Drag over
   const handleover = (e) => {
     e.preventDefault();
     setDragactive(true);
   };
+
+  // ✅ Drag leave
   const handleDragleave = () => {
     setDragactive(false);
   };
+
+  // ✅ Drop
   const handledrop = async (e) => {
     e.preventDefault();
     setDragactive(false);
+
     const droppedFiles = Array.from(e.dataTransfer.files);
-    const token = localStorage.getItem("token");
+    const token = getToken();
+
+    if (!token) {
+      navigate("/Login");
+      return;
+    }
+
+    const password = prompt("Enter password");
+    if (!password) return;
+
     try {
       for (let file of droppedFiles) {
-        const formData = new FormData();
-        formData.append("file", file);
-        await fetch(
-          "https://mern-project-4-ihvs.onrender.com/api/files/upload",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-          },
-        );
+        await encryptAndUpload(file, password, token);
       }
+
+      alert("Encrypted upload complete 🔐");
       fetchFiles();
     } catch (err) {
       console.error(err);
     }
   };
+
   const handleDelete = async (id) => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
+
+    if (!token) {
+      navigate("/Login");
+      return;
+    }
+
     try {
       await fetch(`https://mern-project-4-ihvs.onrender.com/api/files/${id}`, {
         method: "DELETE",
@@ -101,6 +156,7 @@ const Dashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       fetchFiles();
     } catch (err) {
       console.error(err);
@@ -108,65 +164,63 @@ const Dashboard = () => {
   };
   const filteredFiles = files
     .filter((file) =>
-      file.filename.toLowerCase().includes(search.toLowerCase()),
+      file.fileName?.toLowerCase().includes(search.toLowerCase()),
     )
     .filter((file) => {
+      const original = file.fileName?.replace(".enc", "") || "";
+
       if (filter === "image") {
-        return file.filename.match(/\.(jpg|jpeg|png|gif)$/);
+        return original.match(/\.(jpg|jpeg|png|gif)$/i);
       }
       if (filter === "pdf") {
-        return file.filename.endsWith(".pdf");
+        return original.endsWith(".pdf");
       }
       return true;
     });
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/Login");
+  };
+
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat  p-6"
-      style={{
-        backgroundImage: `url(${bgimage2})`,
-        backgroundAttachment: "fixed",
-      }}
+      className="min-h-screen w-full bg-cover bg-center p-6"
+      style={{ backgroundImage: `url(${bgimage2})` }}
     >
-      <div className="w-full max-w-md mx-auto mb-6 relative">
+      <div className="w-full max-w-md mx-auto mb-6">
         <input
           type="text"
           placeholder="Search files..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-black/60 backdrop-blur-md text-white placeholder-gray-400 px-5 py-3 rounded-2xl border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+          className="w-full bg-black/60 text-white px-5 py-3 rounded-2xl border border-gray-700"
         />
-
-        <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-          🔍
-        </span>
       </div>
+
       <div className="flex gap-3 mb-6 justify-center">
         {["all", "pdf", "image"].map((type) => (
           <button
             key={type}
             onClick={() => setFilter(type)}
-            className={`px-5 py-2 rounded-full text-sm font-medium transition border
-        ${
-          filter === type
-            ? "bg-indigo-500 text-white border-indigo-500 shadow-md"
-            : "bg-black/60 text-gray-300 border-gray-700 hover:border-indigo-400 hover:text-white"
-        }`}
+            className={`px-5 py-2 rounded-full ${
+              filter === type
+                ? "bg-indigo-500 text-white"
+                : "bg-gray-700 text-gray-300"
+            }`}
           >
-            {type.charAt(0).toUpperCase() + type.slice(1)}
+            {type}
           </button>
         ))}
       </div>
+
       <div
         onDrop={handledrop}
         onDragLeave={handleDragleave}
         onDragOver={handleover}
-        onDragEnter={handleover}
-        className={`relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition
-  ${
-    dragactive
-      ? "border-indigo-500 bg-indigo-500/10"
-      : "border-gray-700 bg-black/60 hover:border-indigo-400"
-  }`}
+        className={`relative border-2 border-dashed rounded-2xl p-10 text-center ${
+          dragactive ? "border-indigo-500" : "border-gray-700"
+        }`}
       >
         <input
           type="file"
@@ -175,60 +229,34 @@ const Dashboard = () => {
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         />
 
-        <div className="flex flex-col items-center justify-center space-y-4 pointer-events-none">
-          <div className="text-4xl">📂</div>
-
-          <p className="text-lg text-white font-medium">
-            Drag & drop files here
-          </p>
-
-          <p className="text-gray-400 text-sm">
-            or click to browse from your device
-          </p>
-
-          <span className="text-indigo-400 text-sm">
-            Upload your files securely
-          </span>
-        </div>
+        <p className="text-white">Drag & drop or click to upload 🔐</p>
       </div>
-      <div className="flex items-center gap-3 mb-6">
-        <h2 className="text-3xl font-bold text-white">My Files</h2>
 
-        <CiFileOn className="text-indigo-400 text-3xl" />
+      <div className="flex items-center gap-3 mt-6 mb-4">
+        <h2 className="text-2xl text-white">My Files</h2>
+        <CiFileOn className="text-white" />
       </div>
-      <div className="mt-6">
-        {filteredFiles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="text-5xl mb-4">📂</div>
 
-            <p className="text-xl text-gray-300 font-medium">No files found</p>
-
-            <p className="text-gray-500 mt-2">
-              Try uploading files or change your filter
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredFiles.map((file) => (
-              <FileCard
-                key={file._id}
-                file={file}
-                onDelete={() => handleDelete(file._id)}
-              />
-            ))}
-          </div>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {filteredFiles.map((file) => (
+          <FileCard
+            key={file._id}
+            file={file}
+            onDelete={() => handleDelete(file._id)}
+          />
+        ))}
       </div>
-      <button
-        onClick={() => {
-          localStorage.removeItem("token");
-          navigate("/");
-        }}
-        className="mt-6 bg-red-500 text-white px-4 py-2 rounded hover:bg-yellow-300"
-      >
-        Logout
-      </button>
+
+      <div className="mt-10 flex justify-center">
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-6 py-2 rounded"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
+
 export default Dashboard;
