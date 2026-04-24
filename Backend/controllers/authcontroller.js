@@ -1,47 +1,89 @@
- const User= require("../models/User") 
- const bcrypt=require("bcryptjs");
- const jwt=require("jsonwebtoken");
- exports.register= async(req,res)=>{
-  try{
-    const{email,password}=req.body;
-    const existuser=await User.findOne({email});
-    if(existuser){
-      return res.json({message:"user alreadyexist"});
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+exports.sendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email required" });
     }
-    const hashedpassword=await bcrypt.hash(password,10);
-    const newuser=new User({
-      email,
-      password:hashedpassword,
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    // Hash OTP before saving
+    const hashedOtp = await bcrypt.hash(otp.toString(), 10);
+
+    // Save OTP in DB (important for verification)
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({ email });
+    }
+
+    user.otp = hashedOtp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
+    await user.save();
+
+    // 📧 Setup transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.APP_PASSWORD, // Gmail App Password
+      },
     });
-    await newuser.save();
-    res.json({message:"user created successfully"});
-  }
-  catch(err){
-    res.json({error:err.message})
-  }
- }
- exports.login=async(req,res)=>{
-  try{
-const{email,password}=req.body;
-const user =await User.findOne({email});
-if(!user){
- return res.json({message:"user is not found"});
-}
-const isMatch=await bcrypt.compare(password,user.password);
-  
-  if(!isMatch){
-    return res.json({message:"invalid credentials"});
-  }
-  const token = jwt.sign({ id: user.id }, "secretkey", {
-      expiresIn: "1d",
+
+    // 📩 Send mail
+    await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP is ${otp}`,
     });
+
+    res.json({ message: "OTP sent to email" });
+
+  } catch (error) {
+    console.log("ERROR:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(otp.toString(), user.otp);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (user.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    user.isVerified = true;
+    user.otp = null;
+
+    await user.save();
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
     res.json({ message: "Login successful", token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-   catch(err) {
-    res.json({ error: err.message });
-  }
-  
-
- }
-
+};

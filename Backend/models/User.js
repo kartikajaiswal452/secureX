@@ -7,7 +7,9 @@ unique:true
   },
   password:{
     type:String,
-    required:true
     },
-  })
+    otp:String,
+    otpExpiry:Date
+
+  },{timestamps:true});
 module.exports=mongoose.model("User",userschema);

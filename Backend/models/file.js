@@ -1,16 +1,26 @@
 const mongoose = require("mongoose");
+
 const fileSchema = new mongoose.Schema({
-  filename: { type: String, required: true },
-  path: { type: String, required: true },
-  size: { type: String },
+  fileName: { type: String, required: true },
+
+  data: { type: String, required: true },
+
+  size: { type: Number },
+
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  shareId: {         
+
+  shareId: {
     type: String,
-    sparse: true      
-  }
+    sparse: true,
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.models.File || mongoose.model("File", fileSchema);
