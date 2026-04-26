@@ -46,7 +46,6 @@ const Login = () => {
     }
   };
 
-  // ✅ Verify OTP
   const verifyOtp = async () => {
     if (!email || !otp) {
       alert("Enter email and OTP");
@@ -77,7 +76,6 @@ const Login = () => {
     }
   };
 
-  // 🔐 Password Login
   const handleClick = async (e) => {
     e.preventDefault();
 
@@ -123,14 +121,12 @@ const Login = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE FORM */}
       <div className="w-1/2 bg-slate-300 flex items-center justify-center">
         <div className="bg-white shadow-xl rounded-2xl p-8 w-98">
           <h2 className="text-2xl font-semibold text-center mb-6 text-blue-500">
             Secure Login
           </h2>
 
-          {/* EMAIL */}
           <input
             type="email"
             placeholder="Enter your email"
@@ -139,7 +135,6 @@ const Login = () => {
             className="w-full mb-3 p-3 rounded-lg border text-center"
           />
 
-          {/* OTP SECTION */}
           <div className="flex gap-2 mb-3">
             <input
               type="text"
@@ -165,7 +160,6 @@ const Login = () => {
 
           <div className="text-center text-gray-400 mb-3 text-sm">OR</div>
 
-          {/* PASSWORD */}
           <input
             type="password"
             placeholder="Enter password"
