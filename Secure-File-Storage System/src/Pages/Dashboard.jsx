@@ -141,31 +141,47 @@ const Dashboard = () => {
   }, [menuOpen]);
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center p-6"
-      style={{ backgroundImage: `url(${bgimage2})` }}
-    >
+    <div className="min-h-screen bg-cover bg-center p-6 bg-slate-700">
       <div className="absolute top-5 right-5 z-50">
-        <FaUserCircle
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen(!menuOpen);
-          }}
-          className="text-white text-3xl cursor-pointer hover:scale-110 transition"
-        />
+        {user?.profilePic ? (
+          <img
+            src={user.profilePic}
+            alt="avatar"
+            className="w-10 h-10 rounded-full object-cover cursor-pointer border-2 border-indigo-500 hover:scale-110 transition"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen(!menuOpen);
+            }}
+          />
+        ) : (
+          <FaUserCircle
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen(!menuOpen);
+            }}
+            className="text-white text-3xl cursor-pointer hover:scale-110 transition"
+          />
+        )}
 
+        {/* Dropdown */}
         <div
           onClick={(e) => e.stopPropagation()}
           className={`absolute right-0 mt-3 w-56 bg-black/90 backdrop-blur-md 
-          rounded-xl shadow-2xl border border-gray-700 p-4
-          transition-all duration-200 origin-top-right
-          ${
-            menuOpen
-              ? "scale-100 opacity-100"
-              : "scale-95 opacity-0 pointer-events-none"
-          }`}
+    rounded-xl shadow-2xl border border-gray-700 p-4
+    transition-all duration-200 origin-top-right
+    ${
+      menuOpen
+        ? "scale-100 opacity-100"
+        : "scale-95 opacity-0 pointer-events-none"
+    }`}
         >
-          <div className="border-b border-gray-700 pb-3 mb-3">
+          <div className="border-b border-gray-700 pb-3 mb-3 text-center">
+            {user?.profilePic && (
+              <img
+                src={user.profilePic}
+                className="w-16 h-16 rounded-full mx-auto mb-2 border"
+              />
+            )}
             <p className="text-white font-semibold">{user?.name || "User"}</p>
             <p className="text-gray-400 text-sm">
               {user?.email || "email@example.com"}
@@ -177,7 +193,7 @@ const Dashboard = () => {
               navigate("/profile");
               setMenuOpen(false);
             }}
-            className="cursor-pointer hover:bg-gray-800 px-3 py-2 rounded"
+            className="cursor-pointer hover:bg-gray-800 px-3 py-2 rounded text-white"
           >
             👤 Profile
           </p>
@@ -187,7 +203,7 @@ const Dashboard = () => {
               navigate("/dashboard");
               setMenuOpen(false);
             }}
-            className="cursor-pointer hover:bg-gray-800 px-3 py-2 rounded"
+            className="cursor-pointer hover:bg-gray-800 px-3 py-2 rounded text-white"
           >
             📁 Dashboard
           </p>
@@ -226,7 +242,6 @@ const Dashboard = () => {
           </button>
         ))}
       </div>
-
       <div
         onDrop={handledrop}
         onDragOver={(e) => {
