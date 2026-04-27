@@ -12,10 +12,9 @@ exports.sendOtp = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000);
 
-    // Hash OTP before saving
     const hashedOtp = await bcrypt.hash(otp.toString(), 10);
 
-    // Save OTP in DB (important for verification)
+    
     let user = await User.findOne({ email });
 
     if (!user) {
@@ -26,16 +25,16 @@ exports.sendOtp = async (req, res) => {
     user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
     await user.save();
 
-    // 📧 Setup transporter
+    
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL,
-        pass: process.env.APP_PASSWORD, // Gmail App Password
+        pass: process.env.APP_PASSWORD,
       },
     });
 
-    // 📩 Send mail
+  
     await transporter.sendMail({
       from: process.env.EMAIL,
       to: email,

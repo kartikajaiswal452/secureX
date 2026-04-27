@@ -2,7 +2,7 @@ const crypto = require("crypto");
 
 const algorithm = "aes-256-cbc";
 
-// 🔑 derive key from password
+
 const getKey = (password) =>
   crypto.createHash("sha256").update(password).digest();
 

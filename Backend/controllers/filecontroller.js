@@ -1,53 +1,66 @@
-const fs = require("fs");
-const path = require("path");
 const File = require("../models/file");
-const { encryptBuffer } = require("../utils/encryption");
+const { encryptBuffer, decryptBuffer } = require("../utils/encryption");
+const axios = require("axios");
+const cloudinary = require("../config/cloudinary");
+const streamifier = require("streamifier");
 
-// =========================
-// 📤 UPLOAD + ENCRYPT FILE
-// =========================
 const uploadFile = async (req, res) => {
   try {
+    console.log("🔥 Upload started");
+
     const password = req.body.password;
 
     if (!req.file || !password) {
+      console.log("❌ Missing file or password");
       return res.status(400).json({ message: "Missing file or password" });
     }
 
-    // 🔐 Encrypt file buffer
     const { iv, data } = encryptBuffer(req.file.buffer, password);
 
-    // 📁 Save encrypted file
-    const fileName = Date.now() + "-" + req.file.originalname + ".enc";
-    const filePath = path.join(__dirname, "../uploads", fileName);
+    console.log("🔐 File encrypted");
 
-    fs.writeFileSync(filePath, data);
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "raw",
+        folder: "secure-files",
+        public_id: Date.now() + "-" + req.file.originalname,
+      },
+      async (error, result) => {
+        if (error) {
+          console.log("❌ Cloudinary error:", error);
+          return res.status(500).json({ message: "Upload failed" });
+        }
 
-    // 💾 Save metadata
-    const newFile = new File({
-      fileName: req.file.originalname,
-      filePath,
-      iv,
-      size: req.file.size,
-      userId: req.user.id,
-    });
+        console.log("✅ Uploaded to Cloudinary:", result.secure_url);
 
-    await newFile.save();
+        const newFile = new File({
+          fileName: req.file.originalname,
+          fileUrl: result.secure_url,
+          iv,
+          size: req.file.size,
+          userId: req.user.id,
+        });
 
-    res.status(201).json(newFile);
+        await newFile.save();
+
+        console.log("💾 Saved in MongoDB");
+
+        res.status(201).json(newFile);
+      }
+    );
+
+    streamifier.createReadStream(data).pipe(uploadStream);
+
   } catch (err) {
-    console.error(err);
+    console.error("🔥 Upload crash:", err);
     res.status(500).json({ message: "Upload failed" });
   }
 };
-// =========================
-// 📂 GET ALL FILES
-// =========================
+
 const getFiles = async (req, res) => {
   try {
-    const files = await File.find({ userId: req.user.id }).sort({
-      createdAt: -1,
-    });
+    const files = await File.find({ userId: req.user.id })
+      .sort({ createdAt: -1 });
 
     res.json(files);
   } catch (err) {
@@ -56,40 +69,32 @@ const getFiles = async (req, res) => {
   }
 };
 
-// =========================
-// 🗑 DELETE FILE
-// =========================
-
 
 const deleteFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
 
-    if (!file) {
-      return res.status(404).json({ message: "File not found" });
-    }
+    if (!file) return res.status(404).json({ message: "Not found" });
 
-    if (file.userId.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Unauthorized" });
-    }
+    const urlParts = file.fileUrl.split("/");
+    const fileNameWithExt = urlParts[urlParts.length - 1];
+    const publicId = fileNameWithExt.substring(0, fileNameWithExt.lastIndexOf("."));
 
-    // 🧹 delete file from disk
-    if (fs.existsSync(file.filePath)) {
-      fs.unlinkSync(file.filePath);
-    }
+    await cloudinary.uploader.destroy(`secure-files/${publicId}`, {
+      resource_type: "raw",
+    });
 
     await file.deleteOne();
 
-    res.json({ message: "File deleted successfully" });
+    res.json({ message: "Deleted successfully" });
+
   } catch (err) {
-    console.error("DELETE ERROR:", err);
+    console.error(err);
     res.status(500).json({ message: "Delete failed" });
   }
 };
 
-// =========================
-// 🔓 DECRYPT + DOWNLOAD FILE
-// =========================
+
 const downloadFile = async (req, res) => {
   try {
     const { password } = req.body;
@@ -97,9 +102,11 @@ const downloadFile = async (req, res) => {
 
     if (!file) return res.status(404).json({ message: "Not found" });
 
-    const encryptedData = fs.readFileSync(file.filePath);
+    const response = await axios.get(file.fileUrl, {
+      responseType: "arraybuffer",
+    });
 
-    const { decryptBuffer } = require("../utils/encryption");
+    const encryptedData = Buffer.from(response.data);
 
     const decrypted = decryptBuffer(
       encryptedData,
@@ -113,8 +120,10 @@ const downloadFile = async (req, res) => {
     );
 
     res.send(decrypted);
+
   } catch (err) {
-    res.status(500).json({ message: "Decryption failed (wrong password?)" });
+    console.error(err);
+    res.status(500).json({ message: "Decryption failed" });
   }
 };
 
