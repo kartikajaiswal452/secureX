@@ -9,7 +9,7 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const authRoutes = require("./routes/authroutes");
 const fileRoutes = require("./routes/fileroutes");
-const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("./routes/userroutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/files", fileRoutes);
 
