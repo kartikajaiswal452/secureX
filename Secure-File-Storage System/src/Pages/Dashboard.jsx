@@ -65,7 +65,42 @@ const Dashboard = () => {
 
     return await res.json();
   };
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
+    const token = getToken();
+    if (!token) return navigate("/Login");
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch(
+        "https://mern-project-4-ihvs.onrender.com/api/users/upload-profile",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        },
+      );
+
+      const data = await res.json();
+
+      // update user in localStorage
+      localStorage.setItem("user", JSON.stringify(data));
+
+      alert("Profile updated ✅");
+
+      // reload to reflect change
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed ❌");
+    }
+  };
   const handleupload = async (e) => {
     const selectedFiles = Array.from(e.target.files || []);
     const token = getToken();
