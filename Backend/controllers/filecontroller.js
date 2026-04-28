@@ -71,10 +71,9 @@ const getFiles = async (req, res) => {
 };
 
 
+
 const deleteFile = async (req, res) => {
   try {
-    console.log("DELETE FILE ID:", req.params.id);
-
     const file = await File.findById(req.params.id);
 
     if (!file) {
@@ -83,52 +82,29 @@ const deleteFile = async (req, res) => {
       });
     }
 
-    
-    if (file.userId.toString() !== req.user.id) {
-      return res.status(403).json({
-        message: "Unauthorized",
-      });
+    console.log("FILE:", file);
+
+    // Prevent crash
+    if (file.fileUrl) {
+      const parts = file.fileUrl.split("/");
+      console.log(parts);
     }
 
-  
-    const url = file.fileUrl;
-
-    const parts = url.split("/");
-
-    const uploadIndex = parts.findIndex(
-      (p) => p === "upload"
-    );
-
-    let publicIdWithExt = parts
-      .slice(uploadIndex + 2)
-      .join("/");
-
-    publicIdWithExt = publicIdWithExt.split("?")[0];
-
-    const publicId = publicIdWithExt.replace(/\.[^/.]+$/, "");
-
-    console.log("CLOUDINARY PUBLIC ID:", publicId);
-
-    
-    await cloudinary.uploader.destroy(publicId, {
-      resource_type: "raw",
-    });
-
-   
     await File.findByIdAndDelete(req.params.id);
 
-    res.json({
-      message: "File deleted successfully",
+    res.status(200).json({
+      message: "Deleted successfully",
     });
 
-  } catch (err) {
-    console.error("DELETE ERROR:", err);
+  } catch (error) {
+    console.error("DELETE ERROR:", error);
 
     res.status(500).json({
-      message: "Delete failed",
+      message: error.message,
     });
   }
 };
+
 
 
 const downloadFile = async (req, res) => {
