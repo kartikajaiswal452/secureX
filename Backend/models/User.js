@@ -20,9 +20,34 @@ const userschema = new mongoose.Schema(
     otp: String,
     otpExpiry: Date,
 
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
     profilePic: {
       type: String,
       default: "",
+    },
+
+    bio: {
+      type: String,
+      default: "",
+    },
+
+    phone: {
+      type: String,
+      default: "",
+    },
+
+    location: {
+      type: String,
+      default: "",
+    },
+
+    lastLogin: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }

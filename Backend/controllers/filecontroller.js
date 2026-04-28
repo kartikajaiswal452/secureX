@@ -34,12 +34,13 @@ const uploadFile = async (req, res) => {
         console.log("✅ Uploaded to Cloudinary:", result.secure_url);
 
         const newFile = new File({
-          fileName: req.file.originalname,
-          fileUrl: result.secure_url,
-          iv,
-          size: req.file.size,
-          userId: req.user.id,
-        });
+  fileName: req.file.originalname,
+  fileUrl: result.secure_url,
+  publicId: result.public_id,
+  iv,
+  size: req.file.size,
+  userId: req.user.id,
+});
 
         await newFile.save();
 
@@ -72,25 +73,60 @@ const getFiles = async (req, res) => {
 
 const deleteFile = async (req, res) => {
   try {
+    console.log("DELETE FILE ID:", req.params.id);
+
     const file = await File.findById(req.params.id);
 
-    if (!file) return res.status(404).json({ message: "Not found" });
+    if (!file) {
+      return res.status(404).json({
+        message: "File not found",
+      });
+    }
 
-    const urlParts = file.fileUrl.split("/");
-    const fileNameWithExt = urlParts[urlParts.length - 1];
-    const publicId = fileNameWithExt.substring(0, fileNameWithExt.lastIndexOf("."));
+    
+    if (file.userId.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+    }
 
-    await cloudinary.uploader.destroy(`secure-files/${publicId}`, {
+  
+    const url = file.fileUrl;
+
+    const parts = url.split("/");
+
+    const uploadIndex = parts.findIndex(
+      (p) => p === "upload"
+    );
+
+    let publicIdWithExt = parts
+      .slice(uploadIndex + 2)
+      .join("/");
+
+    publicIdWithExt = publicIdWithExt.split("?")[0];
+
+    const publicId = publicIdWithExt.replace(/\.[^/.]+$/, "");
+
+    console.log("CLOUDINARY PUBLIC ID:", publicId);
+
+    
+    await cloudinary.uploader.destroy(publicId, {
       resource_type: "raw",
     });
 
-    await file.deleteOne();
+   
+    await File.findByIdAndDelete(req.params.id);
 
-    res.json({ message: "Deleted successfully" });
+    res.json({
+      message: "File deleted successfully",
+    });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Delete failed" });
+    console.error("DELETE ERROR:", err);
+
+    res.status(500).json({
+      message: "Delete failed",
+    });
   }
 };
 

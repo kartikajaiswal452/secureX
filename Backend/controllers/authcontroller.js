@@ -1,20 +1,31 @@
 const User = require("../models/User");
+
+const cloudinary = require("../config/cloudinary");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+
+
+
 exports.sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ message: "Email required" });
+      return res.status(400).json({
+        message: "Email required",
+      });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000);
+    const otp = Math.floor(
+      100000 + Math.random() * 900000,
+    );
 
-    const hashedOtp = await bcrypt.hash(otp.toString(), 10);
+    const hashedOtp = await bcrypt.hash(
+      otp.toString(),
+      10,
+    );
 
-    
     let user = await User.findOne({ email });
 
     if (!user) {
@@ -22,19 +33,21 @@ exports.sendOtp = async (req, res) => {
     }
 
     user.otp = hashedOtp;
-    user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
+
+    user.otpExpiry =
+      Date.now() + 5 * 60 * 1000;
+
     await user.save();
 
-    
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.APP_PASSWORD,
-      },
-    });
+    const transporter =
+      nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.APP_PASSWORD,
+        },
+      });
 
-  
     await transporter.sendMail({
       from: process.env.EMAIL,
       to: email,
@@ -42,11 +55,15 @@ exports.sendOtp = async (req, res) => {
       text: `Your OTP is ${otp}`,
     });
 
-    res.json({ message: "OTP sent to email" });
-
+    res.json({
+      message: "OTP sent to email",
+    });
   } catch (error) {
     console.log("ERROR:", error);
-    res.status(500).json({ message: error.message });
+
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
@@ -54,35 +71,122 @@ exports.verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      email,
+    });
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({
+        message: "User not found",
+      });
     }
 
-    const isMatch = await bcrypt.compare(otp.toString(), user.otp);
+    const isMatch = await bcrypt.compare(
+      otp.toString(),
+      user.otp,
+    );
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid OTP" });
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
     }
 
     if (user.otpExpiry < Date.now()) {
-      return res.status(400).json({ message: "OTP expired" });
+      return res.status(400).json({
+        message: "OTP expired",
+      });
     }
 
     user.isVerified = true;
+
     user.otp = null;
 
     await user.save();
 
     const token = jwt.sign(
-      { id: user._id },
+      {
+        id: user._id,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      {
+        expiresIn: "1d",
+      },
     );
 
-    res.json({ message: "Login successful", token });
+    res.json({
+      message: "Login successful",
+      token,
+      user,
+    });
+
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+};
+
+
+
+exports.uploadProfilePic = async (req, res) => {
+  try {
+    const user = await User.findById(
+      req.user.id,
+    );
+
+    if (!req.file) {
+      return res.status(400).json({
+        message: "No image uploaded",
+      });
+    }
+
+    const result =
+      await cloudinary.uploader.upload(
+        req.file.path,
+        {
+          folder: "profile-pictures",
+        },
+      );
+
+    user.profilePic = result.secure_url;
+
+    await user.save();
+
+    res.json(user);
+
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      message: "Upload failed",
+    });
+  }
+};
+
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const updatedUser =
+      await User.findByIdAndUpdate(
+        req.user.id,
+        req.body,
+        { new: true }
+      );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json(updatedUser);
+
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      message: "Profile update failed",
+    });
   }
 };
