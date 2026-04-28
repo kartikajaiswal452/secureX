@@ -19,7 +19,6 @@ const FileCard = ({ file, onDelete }) => {
     return <FaFileAlt className="text-gray-500 text-3xl" />;
   };
 
-  // ✅ DOWNLOAD (Backend decrypts)
   const handleDownload = async () => {
     const password = prompt("Enter password");
     if (!password) return;
@@ -59,7 +58,6 @@ const FileCard = ({ file, onDelete }) => {
     }
   };
 
-  // ✅ SHARE
   const handleShare = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -85,7 +83,7 @@ const FileCard = ({ file, onDelete }) => {
 
   return (
     <div
-      className="bg-black/60 p-4 rounded-2xl border border-gray-800 shadow-lg 
+      className="bg-blue-700/60 p-4 rounded-2xl border border-gray-800 shadow-lg 
                  transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
     >
       {/* Icon */}
