@@ -86,18 +86,14 @@ const FileCard = ({ file, onDelete }) => {
       className="bg-blue-700/60 p-4 rounded-2xl border border-gray-800 shadow-lg 
                  transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
     >
-      {/* Icon */}
       <div className="text-4xl mb-3 flex justify-center">{getFileIcon()}</div>
 
-      {/* Name */}
       <p className="text-white truncate">{file.fileName}</p>
 
-      {/* Size */}
       <p className="text-sm text-gray-400">
         {(file.size / 1024).toFixed(2)} KB
       </p>
 
-      {/* Actions */}
       <div className="flex justify-between mt-4 text-white">
         <button onClick={handleDownload} className="hover:text-green-400">
           <FaDownload />
