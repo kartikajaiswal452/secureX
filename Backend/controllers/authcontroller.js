@@ -216,30 +216,32 @@ exports.register = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        message: "Email and password required",
+        message: "All fields required",
       });
     }
 
-    const user = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      email,
+    });
 
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found. Verify OTP first",
+    if (existingUser) {
+      return res.status(400).json({
+        message: "User already exists",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(
-      password,
-      10
-    );
+    const hashedPassword =
+      await bcrypt.hash(password, 10);
 
-    user.password = hashedPassword;
+    const user = new User({
+      email,
+      password: hashedPassword,
+    });
 
     await user.save();
 
-    res.json({
+    res.status(201).json({
       message: "Registration successful",
-      user,
     });
 
   } catch (error) {
