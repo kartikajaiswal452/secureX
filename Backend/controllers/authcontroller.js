@@ -9,6 +9,9 @@ const nodemailer = require("nodemailer");
 
 exports.sendOtp = async (req, res) => {
   try {
+
+    console.log("REQ BODY:", req.body);
+
     const { email } = req.body;
 
     if (!email) {
@@ -18,12 +21,12 @@ exports.sendOtp = async (req, res) => {
     }
 
     const otp = Math.floor(
-      100000 + Math.random() * 900000,
-    );
+      100000 + Math.random() * 900000
+    ).toString();
 
     const hashedOtp = await bcrypt.hash(
-      otp.toString(),
-      10,
+      otp,
+      10
     );
 
     let user = await User.findOne({ email });
@@ -39,6 +42,15 @@ exports.sendOtp = async (req, res) => {
 
     await user.save();
 
+    console.log("EMAIL:", process.env.EMAIL);
+
+    console.log(
+      "APP_PASSWORD:",
+      process.env.APP_PASSWORD
+        ? "FOUND"
+        : "MISSING"
+    );
+
     const transporter =
       nodemailer.createTransport({
         service: "gmail",
@@ -47,6 +59,10 @@ exports.sendOtp = async (req, res) => {
           pass: process.env.APP_PASSWORD,
         },
       });
+
+    await transporter.verify();
+
+    console.log("MAIL SERVICE READY");
 
     await transporter.sendMail({
       from: process.env.EMAIL,
@@ -58,8 +74,11 @@ exports.sendOtp = async (req, res) => {
     res.json({
       message: "OTP sent to email",
     });
+
   } catch (error) {
-    console.log("ERROR:", error);
+
+    console.log("SEND OTP ERROR:");
+    console.log(error);
 
     res.status(500).json({
       message: error.message,
