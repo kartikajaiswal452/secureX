@@ -2,6 +2,21 @@ import React, { useState, useEffect } from "react";
 import { FaBars, FaUser, FaChartPie, FaLock, FaHistory } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+
+const COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444"];
+
 const Profile = () => {
   const navigate = useNavigate();
 
@@ -12,18 +27,13 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
+
   const [user, setUser] = useState(() => {
     try {
       const storedUser = localStorage.getItem("user");
-
-      if (!storedUser || storedUser === "undefined") {
-        return null;
-      }
-
+      if (!storedUser || storedUser === "undefined") return null;
       return JSON.parse(storedUser);
-    } catch (err) {
-      console.log("User parse error:", err);
-
+    } catch {
       return null;
     }
   });
@@ -37,21 +47,17 @@ const Profile = () => {
 
   useEffect(() => {
     fetch("https://mern-project-4-ihvs.onrender.com/api/files", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => {
         setFiles(data || []);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, [token]);
 
+  // ===== STATS =====
   const totalFiles = files.length;
 
   const totalSize = (
@@ -72,18 +78,27 @@ const Profile = () => {
 
   const otherCount = totalFiles - imageCount - pdfCount - videoCount;
 
-  const largestFile =
-    files.length > 0
-      ? files.reduce((max, file) => (file.size > max.size ? file : max))
-      : null;
-
   const storageLimit = 1024;
-
   const storageUsedPercent = ((totalSize / storageLimit) * 100).toFixed(1);
 
+  // ===== CHART DATA =====
+  const pieData = [
+    { name: "Images", value: imageCount },
+    { name: "PDFs", value: pdfCount },
+    { name: "Videos", value: videoCount },
+    { name: "Others", value: otherCount },
+  ];
+
+  const barData = [
+    { name: "Files", value: totalFiles },
+    { name: "Storage(MB)", value: parseFloat(totalSize) },
+    { name: "Images", value: imageCount },
+    { name: "PDFs", value: pdfCount },
+  ];
+
+  // ===== HANDLERS =====
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
 
     const formData = new FormData();
@@ -94,22 +109,16 @@ const Profile = () => {
         "https://mern-project-4-ihvs.onrender.com/api/users/upload-profile",
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         },
       );
 
       const data = await res.json();
-
       localStorage.setItem("user", JSON.stringify(data));
-
       setUser(data);
-
       alert("Profile Updated ✅");
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Upload failed ❌");
     }
   };
@@ -129,120 +138,66 @@ const Profile = () => {
       );
 
       const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Update failed ❌");
-        return;
-      }
+      if (!res.ok) return alert(data.message);
 
       setUser(data);
-
       localStorage.setItem("user", JSON.stringify(data));
-
-      setProfileData({
-        name: data.name || "",
-        bio: data.bio || "",
-        phone: data.phone || "",
-        location: data.location || "",
-      });
-
-      alert("Profile Updated Successfully ✅");
-
       setEditMode(false);
-    } catch (err) {
-      console.error(err);
-      alert("Server Error ❌");
+    } catch {
+      alert("Error ❌");
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
+    localStorage.clear();
     navigate("/login");
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center text-white text-3xl font-bold">
+      <div className="min-h-screen bg-black flex items-center justify-center text-white text-3xl">
         Loading...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-black to-slate-900 text-white flex">
+      {/* SIDEBAR */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-[#08142c] p-6 transition-transform duration-300 z-50
+        className={`fixed top-0 left-0 h-full w-64 bg-slate-950/90 border-r border-white/10 backdrop-blur-xl p-6 transition z-50
         ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
-        <h2 className="text-2xl font-bold mb-8">Secure Storage</h2>
+        <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-400 to-purple-500 text-transparent bg-clip-text">
+          SecureX
+        </h2>
 
-        <p
-          onClick={() => {
-            setActive("profile");
-            setOpen(false);
-          }}
-          className={`cursor-pointer mb-5 flex items-center gap-3 p-3 rounded-xl transition
-          ${
-            active === "profile"
-              ? "bg-indigo-600 text-white"
-              : "hover:text-indigo-400"
-          }`}
-        >
-          <FaUser />
-          Account
-        </p>
-
-        <p
-          onClick={() => {
-            setActive("stats");
-            setOpen(false);
-          }}
-          className={`cursor-pointer mb-5 flex items-center gap-3 p-3 rounded-xl transition
-          ${
-            active === "stats"
-              ? "bg-indigo-600 text-white"
-              : "hover:text-indigo-400"
-          }`}
-        >
-          <FaChartPie />
-          Storage Analytics
-        </p>
-
-        <p
-          onClick={() => {
-            setActive("security");
-            setOpen(false);
-          }}
-          className={`cursor-pointer mb-5 flex items-center gap-3 p-3 rounded-xl transition
-          ${
-            active === "security"
-              ? "bg-indigo-600 text-white"
-              : "hover:text-indigo-400"
-          }`}
-        >
-          <FaLock />
-          Security
-        </p>
-
-        <p
-          onClick={() => {
-            setActive("activity");
-            setOpen(false);
-          }}
-          className={`cursor-pointer flex items-center gap-3 p-3 rounded-xl transition
-          ${
-            active === "activity"
-              ? "bg-indigo-600 text-white"
-              : "hover:text-indigo-400"
-          }`}
-        >
-          <FaHistory />
-          Activity
-        </p>
+        {[
+          { name: "profile", icon: <FaUser />, label: "Account" },
+          { name: "stats", icon: <FaChartPie />, label: "Analytics" },
+          { name: "security", icon: <FaLock />, label: "Security" },
+          { name: "activity", icon: <FaHistory />, label: "Activity" },
+        ].map((item) => (
+          <div
+            key={item.name}
+            onClick={() => {
+              setActive(item.name);
+              setOpen(false);
+            }}
+            className={`cursor-pointer flex items-center gap-3 p-3 rounded-xl mb-3 transition
+            ${
+              active === item.name
+                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
+                : "hover:bg-white/5 text-gray-300"
+            }`}
+          >
+            {item.icon}
+            {item.label}
+          </div>
+        ))}
       </div>
 
+      {/* MAIN */}
       <div className="flex-1 p-6 ml-0 md:ml-64">
         <button
           onClick={() => setOpen(!open)}
@@ -251,329 +206,138 @@ const Profile = () => {
           <FaBars />
         </button>
 
+        {/* PROFILE */}
         {active === "profile" && (
-          <div className="w-full min-h-[85vh] bg-gradient-to-br from-gray-950 via-gray-900 to-black rounded-3xl shadow-2xl border border-gray-800 p-8 md:p-12 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full"></div>
-
-            <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500/10 blur-3xl rounded-full"></div>
-
-            <div className="relative z-10 flex flex-col lg:flex-row justify-between gap-10">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="relative group">
-                  {user?.profilePic ? (
-                    <img
-                      src={user.profilePic}
-                      alt="profile"
-                      className="w-40 h-40 rounded-full object-cover border-4 border-indigo-500 shadow-2xl"
-                    />
-                  ) : (
-                    <div className="w-40 h-40 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl font-bold shadow-2xl">
-                      {user?.email?.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-
-                  <label className="absolute bottom-2 right-2 bg-indigo-600 hover:bg-indigo-700 p-3 rounded-full cursor-pointer shadow-lg transition duration-300 hover:scale-110">
-                    📷
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={handleProfileUpload}
-                    />
-                  </label>
-                </div>
-
-                <div>
-                  <h2 className="text-5xl font-bold text-white tracking-wide">
-                    {user?.name || "User"}
-                  </h2>
-
-                  <p className="text-gray-400 text-lg mt-3">{user?.email}</p>
-
-                  <div className="flex gap-4 mt-8 flex-wrap">
-                    <button
-                      onClick={() => setEditMode(!editMode)}
-                      className="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-xl transition duration-300 font-semibold shadow-lg"
-                    >
-                      {editMode ? "Cancel" : "Edit Profile"}
-                    </button>
-
-                    <button
-                      onClick={() => navigate("/dashboard")}
-                      className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-xl transition duration-300 font-semibold shadow-lg"
-                    >
-                      Upload File
-                    </button>
-
-                    <button
-                      onClick={handleLogout}
-                      className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl transition duration-300 font-semibold shadow-lg"
-                    >
-                      Logout
-                    </button>
+          <div className="bg-[#0f172a]/80 p-8 rounded-3xl">
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                {user?.profilePic ? (
+                  <img
+                    src={user.profilePic}
+                    className="w-28 h-28 rounded-full"
+                  />
+                ) : (
+                  <div className="w-28 h-28 rounded-full bg-indigo-600 flex items-center justify-center text-3xl">
+                    {user?.email?.charAt(0)}
                   </div>
-                </div>
+                )}
+                <input
+                  type="file"
+                  hidden
+                  id="upload"
+                  onChange={handleProfileUpload}
+                />
+                <label
+                  htmlFor="upload"
+                  className="absolute bottom-0 right-0 bg-indigo-600 p-2 rounded-full cursor-pointer"
+                >
+                  📷
+                </label>
               </div>
 
-              <div className="grid grid-cols-2 gap-5 w-full lg:w-[420px]">
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <p className="text-gray-400 text-sm">Total Files</p>
+              <div>
+                <h2 className="text-3xl">{user?.name}</h2>
+                <p className="text-gray-400">{user?.email}</p>
 
-                  <h3 className="text-4xl font-bold mt-2">{totalFiles}</h3>
-                </div>
-
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <p className="text-gray-400 text-sm">Storage Used</p>
-
-                  <h3 className="text-4xl font-bold mt-2 text-indigo-400">
-                    {totalSize} MB
-                  </h3>
-                </div>
-
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <p className="text-gray-400 text-sm">Images</p>
-
-                  <h3 className="text-4xl font-bold mt-2 text-pink-400">
-                    {imageCount}
-                  </h3>
-                </div>
-
-                <div className="bg-gray-800/60 p-6 rounded-2xl border border-gray-700">
-                  <p className="text-gray-400 text-sm">PDFs</p>
-
-                  <h3 className="text-4xl font-bold mt-2 text-red-400">
-                    {pdfCount}
-                  </h3>
+                <div className="flex gap-3 mt-4">
+                  <button
+                    onClick={() => setEditMode(!editMode)}
+                    className="bg-indigo-600 px-4 py-2 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-600 px-4 py-2 rounded"
+                  >
+                    Logout
+                  </button>
                 </div>
               </div>
             </div>
 
             {editMode && (
-              <div className="mt-10 bg-gray-900/70 border border-gray-700 p-6 rounded-2xl w-full max-w-2xl">
-                <h3 className="text-2xl font-semibold mb-6">Edit Profile</h3>
-
-                <div className="grid gap-5">
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    value={profileData.name}
-                    onChange={(e) =>
-                      setProfileData({
-                        ...profileData,
-                        name: e.target.value,
-                      })
-                    }
-                    className="bg-black border border-gray-700 p-4 rounded-xl"
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="Phone Number"
-                    value={profileData.phone}
-                    onChange={(e) =>
-                      setProfileData({
-                        ...profileData,
-                        phone: e.target.value,
-                      })
-                    }
-                    className="bg-black border border-gray-700 p-4 rounded-xl"
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="Location"
-                    value={profileData.location}
-                    onChange={(e) =>
-                      setProfileData({
-                        ...profileData,
-                        location: e.target.value,
-                      })
-                    }
-                    className="bg-black border border-gray-700 p-4 rounded-xl"
-                  />
-
-                  <textarea
-                    placeholder="Bio"
-                    value={profileData.bio}
-                    onChange={(e) =>
-                      setProfileData({
-                        ...profileData,
-                        bio: e.target.value,
-                      })
-                    }
-                    className="bg-black border border-gray-700 p-4 rounded-xl h-32"
-                  />
-
-                  <button
-                    onClick={handleProfileSave}
-                    className="bg-green-500 hover:bg-green-600 py-4 rounded-xl font-semibold text-lg transition"
-                  >
-                    Save Changes
-                  </button>
-                </div>
+              <div className="mt-6">
+                <input
+                  className="w-full p-2 mb-3 bg-black border rounded"
+                  value={profileData.name}
+                  onChange={(e) =>
+                    setProfileData({ ...profileData, name: e.target.value })
+                  }
+                />
+                <button
+                  onClick={handleProfileSave}
+                  className="bg-green-600 px-4 py-2 rounded"
+                >
+                  Save
+                </button>
               </div>
             )}
           </div>
         )}
 
+        {/* ANALYTICS */}
         {active === "stats" && (
           <div className="space-y-8">
-            <h2 className="text-4xl font-bold">Storage Analytics 📊</h2>
+            <h2 className="text-3xl text-indigo-400">Analytics</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  label: "Total Files",
-                  value: totalFiles,
-                },
-                {
-                  label: "Storage Used",
-                  value: `${totalSize} MB`,
-                },
-                {
-                  label: "Images",
-                  value: imageCount,
-                },
-                {
-                  label: "PDF Files",
-                  value: pdfCount,
-                },
-                {
-                  label: "Videos",
-                  value: videoCount,
-                },
-                {
-                  label: "Other Files",
-                  value: otherCount,
-                },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="bg-gray-900 border border-gray-800 p-6 rounded-3xl hover:scale-[1.02] transition"
-                >
-                  <p className="text-gray-400">{item.label}</p>
+            <div className="grid md:grid-cols-2 gap-10">
+              <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie data={pieData} dataKey="value">
+                      {pieData.map((_, i) => (
+                        <Cell key={i} fill={COLORS[i]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
 
-                  <h3 className="text-4xl font-bold mt-3">{item.value}</h3>
-                </div>
-              ))}
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-2xl">
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={barData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#6366f1" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-
-            <div className="bg-gray-900 border border-gray-800 p-8 rounded-3xl">
-              <div className="flex justify-between mb-3">
-                <p className="text-gray-300">Storage Usage</p>
-
-                <p className="text-indigo-400 font-bold">
-                  {storageUsedPercent}%
-                </p>
-              </div>
-
-              <div className="w-full bg-gray-800 rounded-full h-5 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-indigo-500 to-purple-500 h-5 rounded-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min(storageUsedPercent, 100)}%`,
-                  }}
-                ></div>
-              </div>
-
-              <p className="mt-4 text-gray-400 text-sm">1 GB Total Storage</p>
-            </div>
-
-            {largestFile && (
-              <div className="bg-gray-900 border border-gray-800 p-8 rounded-3xl">
-                <p className="text-gray-400">Largest File</p>
-
-                <h3 className="text-3xl font-bold mt-3">
-                  {largestFile.fileName}
-                </h3>
-
-                <p className="text-indigo-400 mt-2 text-lg">
-                  {(largestFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-              </div>
-            )}
           </div>
         )}
 
+        {/* SECURITY */}
         {active === "security" && (
-          <div className="max-w-5xl mx-auto p-6 space-y-8">
-            <h2 className="text-4xl font-bold">Security Center 🔐</h2>
+          <div className="space-y-6">
+            <h2 className="text-3xl text-indigo-400">Security</h2>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-gray-900 border border-gray-800 p-6 rounded-3xl">
-                <h3 className="text-2xl font-semibold mb-4">
-                  Account Security
-                </h3>
+            <input
+              type="password"
+              placeholder="New Password"
+              className="w-full p-3 bg-black border rounded"
+            />
+            <button className="bg-indigo-600 px-5 py-2 rounded">Update</button>
 
-                <div className="space-y-3 text-gray-300">
-                  <p>✅ JWT Authentication</p>
-                  <p>✅ AES-256 Encryption</p>
-                  <p>✅ Cloud Storage</p>
-                  <p>✅ Secure Uploads</p>
-                </div>
-              </div>
-
-              <div className="bg-gray-900 border border-gray-800 p-6 rounded-3xl">
-                <h3 className="text-2xl font-semibold mb-4">Quick Actions</h3>
-
-                <div className="space-y-4">
-                  <button
-                    onClick={() => alert("Password change coming soon")}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl"
-                  >
-                    Change Password
-                  </button>
-
-                  <button
-                    onClick={() => alert("2FA coming soon")}
-                    className="w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-xl"
-                  >
-                    Enable 2FA
-                  </button>
-
-                  <button
-                    onClick={handleLogout}
-                    className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl"
-                  >
-                    Logout All Devices
-                  </button>
-                </div>
-              </div>
-            </div>
+            <button className="bg-red-600 px-5 py-2 rounded">Logout All</button>
           </div>
         )}
 
+        {/* ACTIVITY */}
         {active === "activity" && (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-4xl font-bold">Recent Activity 📂</h2>
+            <h2 className="text-3xl text-indigo-400 mb-4">Activity</h2>
 
-              <button
-                onClick={() => window.location.reload()}
-                className="bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-xl"
-              >
-                Refresh
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {files.slice(0, 10).map((file) => (
-                <div
-                  key={file._id}
-                  className="bg-gray-900 p-5 rounded-2xl border border-gray-800"
-                >
-                  <p className="text-lg font-semibold">{file.fileName}</p>
-
-                  <p className="text-gray-400 text-sm mt-1">
-                    Uploaded on {new Date(file.createdAt).toLocaleString()}
-                  </p>
-
-                  <p className="text-indigo-400 mt-2">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-              ))}
-            </div>
+            {files.slice(0, 5).map((file, i) => (
+              <div key={i} className="flex justify-between border-b py-2">
+                <span>{file.fileName}</span>
+                <span className="text-gray-400">
+                  {(file.size / 1024).toFixed(1)} KB
+                </span>
+              </div>
+            ))}
           </div>
         )}
       </div>

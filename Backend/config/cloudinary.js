@@ -9,3 +9,4 @@ console.log("Cloud config:", {
   name: process.env.CLOUD_NAME,
   key: process.env.API_KEY || process.env.CLOUD_API_KEY,
 });
+cloud_name:process.env.CLOUDname;

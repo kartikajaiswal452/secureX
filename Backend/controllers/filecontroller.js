@@ -74,6 +74,7 @@ const getFiles = async (req, res) => {
 
 const deleteFile = async (req, res) => {
   try {
+
     const file = await File.findById(req.params.id);
 
     if (!file) {
@@ -82,43 +83,80 @@ const deleteFile = async (req, res) => {
       });
     }
 
-    console.log("FILE:", file);
 
-    // Prevent crash
-    if (file.fileUrl) {
-      const parts = file.fileUrl.split("/");
-      console.log(parts);
+    if (file.userId.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
     }
+
+
+    console.log("Deleting from Cloudinary:");
+    console.log(file.publicId);
+
+
+    const result = await cloudinary.uploader.destroy(
+      file.publicId,
+      {
+        resource_type: "raw"
+      }
+    );
+
+
+    console.log("Cloudinary delete response:");
+    console.log(result);
+
+
+    if (result.result !== "ok") {
+      return res.status(500).json({
+        message:"Cloudinary delete failed",
+        result
+      });
+    }
+
 
     await File.findByIdAndDelete(req.params.id);
 
+
     res.status(200).json({
-      message: "Deleted successfully",
+      message:"Deleted successfully"
     });
 
-  } catch (error) {
+
+  } catch(error) {
+
     console.error("DELETE ERROR:", error);
 
     res.status(500).json({
-      message: error.message,
+      message:error.message
     });
+
   }
 };
+const downloadFile = async (req,res)=>{
+  try{
 
+    const {password}=req.body;
 
-
-const downloadFile = async (req, res) => {
-  try {
-    const { password } = req.body;
     const file = await File.findById(req.params.id);
 
-    if (!file) return res.status(404).json({ message: "Not found" });
+    if(!file){
+      return res.status(404).json({
+        message:"File not found"
+      });
+    }
 
-    const response = await axios.get(file.fileUrl, {
-      responseType: "arraybuffer",
-    });
+
+    const response = await axios.get(
+      file.fileUrl,
+      {
+        responseType:"arraybuffer"
+      }
+    );
+
 
     const encryptedData = Buffer.from(response.data);
+
 
     const decrypted = decryptBuffer(
       encryptedData,
@@ -126,16 +164,24 @@ const downloadFile = async (req, res) => {
       password
     );
 
+
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${file.fileName}"`
     );
 
+
     res.send(decrypted);
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Decryption failed" });
+
+  }catch(err){
+
+    console.log(err);
+
+    res.status(500).json({
+      message:"Download failed"
+    });
+
   }
 };
 

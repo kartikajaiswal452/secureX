@@ -11,7 +11,7 @@ const {
   updateProfile,
 } = require("../controllers/usercontroller");
 
-// Upload profile image
+
 router.post(
   "/upload-profile",
   auth,
@@ -19,7 +19,7 @@ router.post(
   uploadProfilePic,
 );
 
-// Update profile
+
 router.put(
   "/update-profile",
   auth,

@@ -6,8 +6,18 @@ const Register = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const handleregister = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
     try {
       const res = await fetch(
         "https://mern-project-4-ihvs.onrender.com/api/auth/register",
@@ -16,7 +26,13 @@ const Register = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({
+            fullName,
+            username,
+            email,
+            phone,
+            password,
+          }),
         },
       );
 
@@ -40,36 +56,89 @@ const Register = () => {
       }}
     >
       <form
-        className="w-80 bg-white rounded-xl mt-10 shadow-lg p-6 hover:bg-gray-300"
         onSubmit={handleregister}
+        className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
       >
-        <h1 className="font-bold text-xl text-center mb-4 hover:text-blue-500">
-          Register
+        <h1 className="text-3xl font-bold text-center text-white mb-6">
+          Create SecureX Account
         </h1>
+
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full p-3 mb-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full p-3 mb-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"
+        />
+
         <input
           type="email"
-          placeholder="Enter email"
+          placeholder="Email Address"
           value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-          className="w-full mb-2 p-2 text-center border-2 rounded-xl hover:border-blue-500 "
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 mb-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"
+          required
         />
+
+        <input
+          type="tel"
+          placeholder="Phone Number"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full p-3 mb-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"
+        />
+
         <input
           type="password"
-          placeholder="Enter Password"
+          placeholder="Password"
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-          className="w-full text-center p-2 border-2 rounded-xl hover:border-blue-500"
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 mb-3 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"
+          required
         />
+
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full p-3 mb-4 rounded-xl bg-white/20 text-white placeholder-gray-300 outline-none"
+          required
+        />
+
         <button
           type="submit"
-          className="bg-blue-500 text-center w-full mt-3  rounded-xl p-2 hover:bg-blue-300 "
+          className="w-full p-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold hover:scale-105 transition"
         >
-          Register
+          Create Account
         </button>
+
+        <p className="text-center text-gray-300 mt-4">
+          Already have an account?{" "}
+          <span
+            className="text-indigo-400 cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
+        </p>
+        <div className="mb-6">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/10 text-gray-300 hover:bg-white/20 hover:text-white transition-all"
+          >
+            ← Back to Home
+          </button>
+        </div>
       </form>
     </div>
   );

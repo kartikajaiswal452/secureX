@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import logo from "../assets/image/securex.jpg";
 import img1 from "../assets/Image/img1.jpg";
 import img2 from "../assets/Image/img3.jpg";
 
@@ -179,14 +179,11 @@ const Login = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
 
           <div className="absolute bottom-10 left-10 text-white">
-            <h1 className="text-5xl font-black leading-tight">
-              Secure Cloud
-              <br />
-              Storage Platform
-            </h1>
+            <h1 className="text-5xl font-black leading-tight">SecureX</h1>
 
             <p className="mt-4 text-gray-300 text-lg">
-              Protect your files with enterprise-grade encryption.
+              Store, manage and share files securely with AES-256 encryption,
+              JWT authentication and complete privacy.
             </p>
           </div>
         </div>
@@ -195,13 +192,29 @@ const Login = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gradient-to-br from-gray-950 via-black to-gray-900">
         <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
           {/* HEADER */}
+          <div className="mb-6">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/10 text-gray-300 hover:bg-white/20 hover:text-white transition-all"
+            >
+              ← Back to Home
+            </button>
+          </div>
 
           <div className="text-center mb-8">
+            <img
+              src={logo}
+              alt="SecureX"
+              className="w-20 h-20 mx-auto rounded-xl bg-white p-2 mb-4"
+            />
+
             <h2 className="text-4xl font-black bg-gradient-to-r from-indigo-400 to-purple-500 text-transparent bg-clip-text">
-              Welcome Back
+              SecureX
             </h2>
 
-            <p className="text-gray-400 mt-3">Login to your secure account</p>
+            <p className="text-gray-400 mt-3">
+              Sign in to your secure storage account
+            </p>
           </div>
 
           <div className="mb-5">
@@ -218,52 +231,12 @@ const Login = () => {
             />
           </div>
 
-          <div className="mb-5">
-            <label className="text-sm text-gray-400 mb-2 block">
-              OTP Verification
-            </label>
-
-            <div className="flex gap-3">
-              <input
-                type="text"
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="flex-1 bg-black/40 border border-gray-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none p-4 rounded-2xl text-white transition"
-              />
-
-              <button
-                onClick={sendOtp}
-                disabled={otpLoading}
-                className="bg-indigo-600 hover:bg-indigo-700 px-5 rounded-2xl font-semibold transition disabled:opacity-50"
-              >
-                {otpLoading ? "Sending..." : "Send"}
-              </button>
-            </div>
-          </div>
-
-          <button
-            onClick={verifyOtp}
-            disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 py-4 rounded-2xl font-bold transition duration-300 shadow-lg disabled:opacity-50"
-          >
-            {loading ? "Verifying..." : "Verify OTP"}
-          </button>
-
-          <div className="flex items-center gap-4 my-8">
-            <div className="flex-1 h-px bg-gray-700"></div>
-
-            <p className="text-gray-500 text-sm">OR</p>
-
-            <div className="flex-1 h-px bg-gray-700"></div>
-          </div>
-
-          <div className="mb-5">
+          <div className="mb-6">
             <label className="text-sm text-gray-400 mb-2 block">Password</label>
 
             <input
               type="password"
-              placeholder="Enter password"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-black/40 border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none p-4 rounded-2xl text-white transition"
@@ -275,8 +248,13 @@ const Login = () => {
             disabled={loading}
             className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-[1.01] py-4 rounded-2xl font-bold transition duration-300 shadow-xl disabled:opacity-50"
           >
-            {loading ? "Logging in..." : "Login with Password"}
+            {loading ? "Signing In..." : "Sign In"}
           </button>
+          <div className="text-right mb-6">
+            <span className="text-indigo-400 cursor-pointer hover:text-indigo-300">
+              Forgot Password?
+            </span>
+          </div>
 
           <p className="text-center text-gray-400 mt-8">
             Don't have an account?{" "}

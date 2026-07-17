@@ -13,10 +13,10 @@ const FileCard = ({ file, onDelete }) => {
   const isImage = /\.(jpg|jpeg|png|gif)$/i.test(file.fileName || "");
 
   const getFileIcon = () => {
-    if (isImage) return <FaImage className="text-blue-500 text-3xl" />;
+    if (isImage) return <FaImage className="text-indigo-400 text-3xl" />;
     if (file.fileName?.endsWith(".pdf"))
       return <FaFileAlt className="text-red-400 text-3xl" />;
-    return <FaFileAlt className="text-gray-500 text-3xl" />;
+    return <FaFileAlt className="text-gray-400 text-3xl" />;
   };
 
   const handleDownload = async () => {
@@ -43,7 +43,6 @@ const FileCard = ({ file, onDelete }) => {
       }
 
       const blob = await res.blob();
-
       const url = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");
@@ -83,29 +82,57 @@ const FileCard = ({ file, onDelete }) => {
 
   return (
     <div
-      className="bg-blue-700/60 p-4 rounded-2xl border border-gray-800 shadow-lg 
-                 transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+      className="group relative bg-white/5 backdrop-blur-xl border border-white/10 
+                 rounded-2xl p-5 shadow-xl transition-all duration-300 
+                 hover:scale-[1.03] hover:shadow-indigo-500/20 hover:border-indigo-400/30"
     >
-      <div className="text-4xl mb-3 flex justify-center">{getFileIcon()}</div>
+      {/* 🔥 Glow Hover Effect */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition"></div>
 
-      <p className="text-white truncate">{file.fileName}</p>
+      {/* 🖼️ IMAGE PREVIEW */}
+      {isImage ? (
+        <div className="h-32 mb-4 rounded-xl overflow-hidden">
+          <img
+            src={`https://mern-project-4-ihvs.onrender.com/uploads/${file.fileName}`}
+            alt={file.fileName}
+            className="w-full h-full object-cover rounded-xl"
+          />
+        </div>
+      ) : (
+        <div className="flex justify-center mb-4">{getFileIcon()}</div>
+      )}
 
-      <p className="text-sm text-gray-400">
-        {(file.size / 1024).toFixed(2)} KB
-      </p>
+      {/* 📄 FILE INFO */}
+      <div className="relative z-10">
+        <p className="text-white font-medium truncate">{file.fileName}</p>
 
-      <div className="flex justify-between mt-4 text-white">
-        <button onClick={handleDownload} className="hover:text-green-400">
+        <p className="text-xs text-gray-400 mt-1">
+          {(file.size / 1024).toFixed(2)} KB
+        </p>
+      </div>
+
+      {/* ⚡ ACTION BUTTONS */}
+      <div className="relative z-10 flex justify-between items-center mt-5">
+        <button
+          onClick={handleDownload}
+          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg 
+                     bg-green-500/10 text-green-400 hover:bg-green-500/20 transition"
+        >
           <FaDownload />
         </button>
 
-        <button onClick={handleShare} className="hover:text-blue-400">
+        <button
+          onClick={handleShare}
+          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg 
+                     bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition"
+        >
           <FaShare />
         </button>
 
         <button
           onClick={() => onDelete(file._id)}
-          className="hover:text-red-400"
+          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-lg 
+                     bg-red-500/10 text-red-400 hover:bg-red-500/20 transition"
         >
           <FaTrash />
         </button>
