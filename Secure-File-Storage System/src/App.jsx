@@ -6,8 +6,8 @@ import Register from "./Pages/Register";
 import SharePage from "./Pages/ShareFile";
 import ProtectedRoute from "./ProtectedRoute";
 import Profile from "./Components/Profile";
-import Files from "./pages/Files";
-import Security from "./pages/Security";
+import Files from "./Pages/Files";
+import Security from "./Pages/Security";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 const App = () => {
