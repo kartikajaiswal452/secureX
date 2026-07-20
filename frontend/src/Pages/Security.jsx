@@ -1,8 +1,8 @@
 import React from "react";
 import { MdOutlineSecurity } from "react-icons/md";
 import { FaLock, FaShieldAlt, FaUserShield } from "react-icons/fa";
-import encryption from "../assets/image/encryption.jpg";
-import security2 from "../assets/image/security2.jpg";
+import encryption from "../assets/Image/encryption.jpg";
+import security2 from "../assets/Image/security2.jpg";
 
 const Security = () => {
   return (

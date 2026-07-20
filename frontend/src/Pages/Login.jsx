@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/image/securex.jpg";
+import logo from "../assets/Image/securex.jpg";
 import img1 from "../assets/Image/img1.jpg";
 import img2 from "../assets/Image/img3.jpg";
 
