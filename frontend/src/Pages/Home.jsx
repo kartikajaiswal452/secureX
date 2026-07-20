@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import bgImage5 from "../assets/image/adrien-olichon-RCAhiGJsUUE-unsplash.jpg";
-import dashboardImg from "../assets/image/folderimg.jpg";
-import sharingImg from "../assets/image/sharingimg.jpg";
-import securityImg from "../assets/image/securityimg.jpg";
-import logo from "../assets/image/securex.jpg";
+import bgImage5 from "../assets/Image/adrien-olichon-RCAhiGJsUUE-unsplash.jpg";
+import dashboardImg from "../assets/Image/folderimg.jpg";
+import sharingImg from "../assets/Image/sharingimg.jpg";
+import securityImg from "../assets/Image/securityimg.jpg";
+import logo from "../assets/Image/securex.jpg";
 const Home = () => {
   const navigate = useNavigate();
 
