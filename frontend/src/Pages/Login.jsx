@@ -4,7 +4,7 @@ import logo from "../assets/image/securex.jpg";
 import img1 from "../assets/Image/img1.jpg";
 import img2 from "../assets/Image/img3.jpg";
 
-const BASE_URL = "https://mern-project-4-ihvs.onrender.com";
+const BASE_URL = "https://securex-d2tq.onrender.com";
 
 const Login = () => {
   const navigate = useNavigate();

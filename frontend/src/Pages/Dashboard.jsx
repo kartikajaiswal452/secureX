@@ -63,14 +63,11 @@ const Dashboard = () => {
     }
 
     try {
-      const res = await fetch(
-        "https://mern-project-4-ihvs.onrender.com/api/files",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await fetch("https://securex-d2tq.onrender.com/api/files", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       const data = await res.json();
 
@@ -99,7 +96,7 @@ const Dashboard = () => {
 
     try {
       const res = await fetch(
-        "https://mern-project-4-ihvs.onrender.com/api/users/upload-profile",
+        "https://securex-d2tq.onrender.com/api/users/upload-profile",
         {
           method: "POST",
 
@@ -128,7 +125,7 @@ const Dashboard = () => {
     formData.append("password", password);
 
     const res = await fetch(
-      "https://mern-project-4-ihvs.onrender.com/api/files/upload",
+      "https://securex-d2tq.onrender.com/api/files/upload",
       {
         method: "POST",
 
@@ -209,7 +206,7 @@ const Dashboard = () => {
     const token = getToken();
 
     try {
-      await fetch(`https://mern-project-4-ihvs.onrender.com/api/files/${id}`, {
+      await fetch(`https://securex-d2tq.onrender.com/api/files/${id}`, {
         method: "DELETE",
 
         headers: {

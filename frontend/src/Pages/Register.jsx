@@ -20,7 +20,7 @@ const Register = () => {
 
     try {
       const res = await fetch(
-        "https://mern-project-4-ihvs.onrender.com/api/auth/register",
+        "https://securex-d2tq.onrender.com/api/auth/register",
         {
           method: "POST",
           headers: {

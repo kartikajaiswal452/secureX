@@ -27,7 +27,7 @@ const FileCard = ({ file, onDelete }) => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `https://mern-project-4-ihvs.onrender.com/api/files/download/${file._id}`,
+        `https://securex-d2tq.onrender.com/api/files/download/${file._id}`,
         {
           method: "POST",
           headers: {
@@ -62,7 +62,7 @@ const FileCard = ({ file, onDelete }) => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `https://mern-project-4-ihvs.onrender.com/api/files/share/${file._id}`,
+        `https://securex-d2tq.onrender.com/api/files/share/${file._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ const FileCard = ({ file, onDelete }) => {
       {isImage ? (
         <div className="h-32 mb-4 rounded-xl overflow-hidden">
           <img
-            src={`https://mern-project-4-ihvs.onrender.com/uploads/${file.fileName}`}
+            src={`https://securex-d2tq.onrender.com/uploads/${file.fileName}`}
             alt={file.fileName}
             className="w-full h-full object-cover rounded-xl"
           />

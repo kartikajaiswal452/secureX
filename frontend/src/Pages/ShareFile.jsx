@@ -5,7 +5,7 @@ const SharePage = () => {
 
   const downloadFile = () => {
     window.open(
-      `https://mern-project-4-ihvs.onrender.com/api/files/public/${shareId}`,
+      `https://securex-d2tq.onrender.com/api/files/public/${shareId}`,
     );
   };
 

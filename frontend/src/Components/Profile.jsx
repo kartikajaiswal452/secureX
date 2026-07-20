@@ -46,7 +46,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    fetch("https://mern-project-4-ihvs.onrender.com/api/files", {
+    fetch("https://securex-d2tq.onrender.com/api/files", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -103,7 +103,7 @@ const Profile = () => {
 
     try {
       const res = await fetch(
-        "https://mern-project-4-ihvs.onrender.com/api/users/upload-profile",
+        "https://securex-d2tq.onrender.com/api/users/upload-profile",
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -123,7 +123,7 @@ const Profile = () => {
   const handleProfileSave = async () => {
     try {
       const res = await fetch(
-        "https://mern-project-4-ihvs.onrender.com/api/users/update-profile",
+        "https://securex-d2tq.onrender.com/api/users/update-profile",
         {
           method: "PUT",
           headers: {
