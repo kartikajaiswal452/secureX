@@ -9,19 +9,14 @@ const app = express();
 
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://secure-x-gules.vercel.app/"
+  "https://secure-x-gules.vercel.app",
+  "https://secure-x-git-main-kartikajaiswal452s-projects.vercel.app",
+  "http://localhost:5173"
 ];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
+    origin: allowedOrigins,
     credentials: true,
   })
 );
