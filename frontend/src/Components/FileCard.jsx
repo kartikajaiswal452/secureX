@@ -86,10 +86,8 @@ const FileCard = ({ file, onDelete }) => {
                  rounded-2xl p-5 shadow-xl transition-all duration-300 
                  hover:scale-[1.03] hover:shadow-indigo-500/20 hover:border-indigo-400/30"
     >
-      {/* 🔥 Glow Hover Effect */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition"></div>
 
-      {/* 🖼️ IMAGE PREVIEW */}
       {isImage ? (
         <div className="h-32 mb-4 rounded-xl overflow-hidden">
           <img
@@ -102,7 +100,6 @@ const FileCard = ({ file, onDelete }) => {
         <div className="flex justify-center mb-4">{getFileIcon()}</div>
       )}
 
-      {/* 📄 FILE INFO */}
       <div className="relative z-10">
         <p className="text-white font-medium truncate">{file.fileName}</p>
 
@@ -111,7 +108,6 @@ const FileCard = ({ file, onDelete }) => {
         </p>
       </div>
 
-      {/* ⚡ ACTION BUTTONS */}
       <div className="relative z-10 flex justify-between items-center mt-5">
         <button
           onClick={handleDownload}

@@ -191,7 +191,6 @@ const Login = () => {
 
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gradient-to-br from-gray-950 via-black to-gray-900">
         <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
-          {/* HEADER */}
           <div className="mb-6">
             <button
               onClick={() => navigate("/")}

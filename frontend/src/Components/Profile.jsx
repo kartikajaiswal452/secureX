@@ -57,7 +57,6 @@ const Profile = () => {
       .catch(() => setLoading(false));
   }, [token]);
 
-  // ===== STATS =====
   const totalFiles = files.length;
 
   const totalSize = (
@@ -81,7 +80,6 @@ const Profile = () => {
   const storageLimit = 1024;
   const storageUsedPercent = ((totalSize / storageLimit) * 100).toFixed(1);
 
-  // ===== CHART DATA =====
   const pieData = [
     { name: "Images", value: imageCount },
     { name: "PDFs", value: pdfCount },
@@ -96,7 +94,6 @@ const Profile = () => {
     { name: "PDFs", value: pdfCount },
   ];
 
-  // ===== HANDLERS =====
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -276,7 +273,6 @@ const Profile = () => {
           </div>
         )}
 
-        {/* ANALYTICS */}
         {active === "stats" && (
           <div className="space-y-8">
             <h2 className="text-3xl text-indigo-400">Analytics</h2>
@@ -309,7 +305,6 @@ const Profile = () => {
           </div>
         )}
 
-        {/* SECURITY */}
         {active === "security" && (
           <div className="space-y-6">
             <h2 className="text-3xl text-indigo-400">Security</h2>
@@ -325,7 +320,6 @@ const Profile = () => {
           </div>
         )}
 
-        {/* ACTIVITY */}
         {active === "activity" && (
           <div>
             <h2 className="text-3xl text-indigo-400 mb-4">Activity</h2>

@@ -6,7 +6,6 @@ const cloudinary =
 const streamifier =
   require("streamifier");
 
-// ================= PROFILE IMAGE =================
 
 const uploadProfilePic = async (
   req,
@@ -70,7 +69,7 @@ const uploadProfilePic = async (
   }
 };
 
-// ================= UPDATE PROFILE =================
+
 
 const updateProfile = async (
   req,

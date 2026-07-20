@@ -44,8 +44,6 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  // ================= TOKEN =================
-
   const getToken = () => {
     const token = localStorage.getItem("token");
 
@@ -308,9 +306,8 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
-      {/* MAIN */}
+
       <div className="flex-1 p-6">
-        {/* TOP BAR */}
         <div className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-4xl font-black bg-gradient-to-r from-indigo-400 to-purple-500 text-transparent bg-clip-text">
@@ -386,30 +383,23 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* STATS */}
         <div className="grid md:grid-cols-3 gap-6 mb-10">
           <div className="group relative overflow-hidden rounded-3xl p-[1px] bg-gradient-to-br from-indigo-400/30 via-purple-500/20 to-transparent hover:from-indigo-400/60 transition-all duration-300">
-            {/* Glass Card */}
             <div className="relative bg-[#0f172a]/80 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 group-hover:border-indigo-400/30 transition-all">
-              {/* Glow Effect */}
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
-              {/* Header Row */}
               <div className="flex items-center justify-between">
                 <p className="text-gray-400 text-sm">Total Files</p>
 
-                {/* Badge */}
                 <span className="text-xs px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                   Active
                 </span>
               </div>
 
-              {/* Main Value */}
               <h2 className="text-4xl font-semibold mt-4 text-white tracking-tight">
                 {totalFiles}
               </h2>
 
-              {/* Sub Info */}
               <p className="text-gray-500 text-xs mt-1">
                 Files stored in your account
               </p>
@@ -417,22 +407,17 @@ const Dashboard = () => {
           </div>
 
           <div className="relative group rounded-3xl p-[1px] bg-gradient-to-br from-purple-500/40 via-indigo-500/30 to-pink-500/30 hover:scale-[1.03] transition-all duration-300">
-            {/* Glow effect */}
             <div className="absolute inset-0 rounded-3xl blur-xl opacity-40 group-hover:opacity-70 transition bg-gradient-to-br from-purple-600 to-pink-500"></div>
 
-            {/* Card */}
             <div className="relative bg-[#0b0f1a]/80 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 shadow-xl">
-              {/* Label */}
               <p className="text-gray-400 text-sm tracking-wide">
                 Storage Used
               </p>
 
-              {/* Value */}
               <h2 className="text-4xl font-extrabold mt-2 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 {totalSize} MB
               </h2>
 
-              {/* Progress bar */}
               <div className="mt-4">
                 <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
@@ -450,12 +435,9 @@ const Dashboard = () => {
           </div>
 
           <div className="group relative overflow-hidden rounded-3xl p-[1px] bg-gradient-to-br from-green-400/30 via-emerald-500/20 to-transparent hover:from-green-400/60 transition-all duration-300">
-            {/* Glass Card */}
             <div className="relative bg-[#0f172a]/80 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 group-hover:border-green-400/30 transition-all">
-              {/* Glow Effect */}
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-green-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
-              {/* Icon */}
               <div className="flex items-center justify-between">
                 <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
                   <MdOutlineSecurity className="text-green-400 text-xl" />
@@ -466,15 +448,12 @@ const Dashboard = () => {
                 </span>
               </div>
 
-              {/* Title */}
               <p className="text-gray-400 text-sm mt-4">Security</p>
 
-              {/* Value */}
               <h2 className="text-2xl font-semibold mt-2 text-white tracking-tight">
                 AES-256 Encryption
               </h2>
 
-              {/* Subtext */}
               <p className="text-gray-500 text-xs mt-1">
                 Industry standard data protection
               </p>
@@ -482,7 +461,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* SEARCH + FILTER */}
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-8">
           <div className="relative w-full md:w-[400px]">
             <FaSearch className="absolute top-4 left-4 text-gray-500" />
@@ -512,7 +490,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* UPLOAD */}
         <div
           onDrop={handledrop}
           onDragOver={(e) => {
@@ -548,7 +525,6 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* FILES */}
         <div className="flex items-center gap-3 mt-10 mb-6">
           <h2 className="text-3xl font-black">My Files</h2>
           <CiFileOn className="text-3xl" />

@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-
-// ✅ YOUR LOCAL IMAGES (FIXED PATH + CASE)
 import bgImage5 from "../assets/image/adrien-olichon-RCAhiGJsUUE-unsplash.jpg";
 import dashboardImg from "../assets/image/folderimg.jpg";
 import sharingImg from "../assets/image/sharingimg.jpg";
@@ -23,16 +21,12 @@ const Home = () => {
         backgroundAttachment: "fixed",
       }}
     >
-      {/* 🔥 DARK OVERLAY */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
-      {/* 🔥 GLOW EFFECTS */}
       <div className="absolute w-[500px] h-[500px] bg-indigo-500/30 blur-3xl rounded-full top-[-100px] left-[-100px]"></div>
       <div className="absolute w-[400px] h-[400px] bg-purple-500/20 blur-3xl rounded-full bottom-[-100px] right-[-100px]"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-6">
-        {/* 🔥 NAVBAR */}
-        {/* 🔥 NAVBAR */}
         <motion.div
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -70,7 +64,6 @@ const Home = () => {
           </div>
         </motion.div>
 
-        {/* 🔥 HERO */}
         <div className="text-center mt-24">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight">
             Secure File Storage System
@@ -89,7 +82,6 @@ const Home = () => {
           </button>
         </div>
 
-        {/* 🔥 FEATURES */}
         <div className="mt-20 grid md:grid-cols-3 gap-6">
           {[
             "Secure Upload",
@@ -109,7 +101,6 @@ const Home = () => {
             </div>
           ))}
 
-          {/* SIDE CARD */}
           <div className="md:row-span-2 p-6 rounded-2xl bg-gradient-to-br from-gray-900 to-black border border-white/10">
             <h2 className="text-2xl text-white font-bold mb-4">
               Why Choose Us?
@@ -123,7 +114,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* 🔥 DASHBOARD PREVIEW */}
         <div className="mt-24 grid md:grid-cols-2 gap-10 items-center">
           <img
             src={dashboardImg}
@@ -141,7 +131,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* 🔥 SHARING SECTION */}
         <div className="mt-24 grid md:grid-cols-2 gap-10 items-center">
           <div>
             <h2 className="text-3xl text-white font-bold mb-4">
@@ -159,7 +148,6 @@ const Home = () => {
           />
         </div>
 
-        {/* 🔥 SECURITY */}
         <div className="mt-24 grid md:grid-cols-2 gap-10 items-center">
           <img
             src={securityImg}
@@ -178,7 +166,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* 🔥 STATS */}
         <div className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
             { num: "10K+", label: "Users" },
@@ -196,7 +183,6 @@ const Home = () => {
           ))}
         </div>
 
-        {/* 🔥 TESTIMONIALS */}
         <div className="mt-24 text-center">
           <h2 className="text-3xl text-white font-bold mb-10">
             What Users Say
@@ -214,7 +200,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* 🔥 FOOTER */}
         <div className="mt-24 border-t border-white/10 py-10 text-center">
           <div className="flex items-center justify-center gap-2">
             <img

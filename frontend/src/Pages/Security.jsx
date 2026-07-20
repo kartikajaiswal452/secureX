@@ -7,7 +7,6 @@ import security2 from "../assets/image/security2.jpg";
 const Security = () => {
   return (
     <div className="min-h-screen bg-[#050816] text-white p-6">
-      {/* 🔥 HERO SECTION */}
       <div className="grid md:grid-cols-2 gap-10 items-center mb-16">
         <div>
           <h1 className="text-5xl font-black bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent mb-6">
@@ -31,7 +30,6 @@ const Security = () => {
           </div>
         </div>
 
-        {/* IMAGE 1 */}
         <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/10">
           <img
             src={encryption}
@@ -41,9 +39,7 @@ const Security = () => {
         </div>
       </div>
 
-      {/* 🔐 SECURITY CARDS */}
       <div className="grid md:grid-cols-3 gap-6 mb-16">
-        {/* Card 1 */}
         <div className="group bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl hover:scale-105 transition">
           <FaLock className="text-3xl text-indigo-400 mb-4" />
           <h2 className="text-xl font-bold mb-2">Encryption</h2>
@@ -52,7 +48,6 @@ const Security = () => {
           </p>
         </div>
 
-        {/* Card 2 */}
         <div className="group bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl hover:scale-105 transition">
           <FaShieldAlt className="text-3xl text-green-400 mb-4" />
           <h2 className="text-xl font-bold mb-2">Secure Storage</h2>
@@ -61,7 +56,6 @@ const Security = () => {
           </p>
         </div>
 
-        {/* Card 3 */}
         <div className="group bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl hover:scale-105 transition">
           <FaUserShield className="text-3xl text-purple-400 mb-4" />
           <h2 className="text-xl font-bold mb-2">User Privacy</h2>
@@ -71,9 +65,7 @@ const Security = () => {
         </div>
       </div>
 
-      {/* 🧠 SECOND SECTION (VISUAL + TEXT) */}
       <div className="grid md:grid-cols-2 gap-10 items-center">
-        {/* IMAGE 2 */}
         <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/10">
           <img
             src={security2}
@@ -82,7 +74,6 @@ const Security = () => {
           />
         </div>
 
-        {/* TEXT */}
         <div>
           <h2 className="text-4xl font-bold mb-6 flex items-center gap-3">
             <MdOutlineSecurity className="text-indigo-400" />
@@ -97,7 +88,6 @@ const Security = () => {
             <li>⚡ Fast & secure file retrieval</li>
           </ul>
 
-          {/* STATUS CARD */}
           <div className="mt-8 bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/20 rounded-3xl p-6 backdrop-blur-xl">
             <p className="text-gray-400">Security Status</p>
             <h2 className="text-xl font-bold mt-2 text-green-400">
