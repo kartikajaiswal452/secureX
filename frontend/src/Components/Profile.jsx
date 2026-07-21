@@ -16,7 +16,25 @@ import {
 } from "recharts";
 
 const COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444"];
+const StatCard = ({ title, value, color }) => {
+  return (
+    <div className="bg-[#0f172a]/80 p-6 rounded-2xl border border-white/10">
+      <p className="text-gray-400">{title}</p>
 
+      <h2 className={`text-4xl font-bold mt-2 ${color}`}>{value}</h2>
+    </div>
+  );
+};
+
+const SecurityCard = ({ title, value }) => {
+  return (
+    <div className="bg-black/20 p-5 rounded-xl border border-white/10">
+      <p className="text-gray-400">{title}</p>
+
+      <h2 className="text-3xl font-bold mt-2 text-white">{value}</h2>
+    </div>
+  );
+};
 const Profile = () => {
   const navigate = useNavigate();
 
@@ -59,11 +77,9 @@ const Profile = () => {
 
   const totalFiles = files.length;
 
-  const totalSize = (
-    files.reduce((acc, f) => acc + (f.size || 0), 0) /
-    1024 /
-    1024
-  ).toFixed(2);
+  const totalSize = Number(
+    (files.reduce((acc, f) => acc + (f.size || 0), 0) / 1024 / 1024).toFixed(2),
+  );
 
   const imageCount = files.filter((f) =>
     /\.(jpg|jpeg|png|gif)$/i.test(f.fileName),
@@ -207,15 +223,7 @@ const Profile = () => {
             {/* Profile Card */}
             <div className="bg-[#0f172a]/80 rounded-3xl overflow-hidden">
               {/* Banner */}
-              <div
-                className="
-h-40 
-bg-gradient-to-r 
-from-indigo-600 
-via-purple-600 
-to-blue-600
-"
-              ></div>
+              <div className="h-40 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600"></div>
 
               <div className="p-8">
                 <div className="flex items-center gap-6 -mt-20">
@@ -225,27 +233,10 @@ to-blue-600
                     {user?.profilePic ? (
                       <img
                         src={user.profilePic}
-                        className="
-w-32 h-32
-rounded-full
-border-4
-border-[#0f172a]
-"
+                        className="w-32 h-32 rounded-full border-4 border-[#0f172a]"
                       />
                     ) : (
-                      <div
-                        className="
-w-32 h-32
-rounded-full
-bg-indigo-600
-flex
-items-center
-justify-center
-text-4xl
-border-4
-border-[#0f172a]
-"
-                      >
+                      <div className="w-32 h-32 rounded-full bg-indigo-600 flex items-center justify-center text-4xl border-4 border-[#0f172a]">
                         {user?.email?.charAt(0)}
                       </div>
                     )}
@@ -259,15 +250,7 @@ border-[#0f172a]
 
                     <label
                       htmlFor="upload"
-                      className="
-absolute
-bottom-2
-right-2
-bg-indigo-600
-p-2
-rounded-full
-cursor-pointer
-"
+                      className="absolute bottom-2 right-2 bg-indigo-600 p-2 rounded-full cursor-pointer"
                     >
                       📷
                     </label>
@@ -280,7 +263,10 @@ cursor-pointer
 
                     <div className="flex gap-3 mt-4">
                       <button
-                        onClick={() => setEditMode(!editMode)}
+                        onClick={() => {
+                          console.log("Edit clicked");
+                          setEditMode(true);
+                        }}
                         className="bg-indigo-600 px-5 py-2 rounded-xl"
                       >
                         Edit Profile
@@ -293,6 +279,27 @@ cursor-pointer
                         Logout
                       </button>
                     </div>
+                    {editMode && (
+                      <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
+                        <input
+                          className="w-full p-3 bg-black border rounded-xl mb-3"
+                          value={profileData.name}
+                          onChange={(e) =>
+                            setProfileData({
+                              ...profileData,
+                              name: e.target.value,
+                            })
+                          }
+                        />
+
+                        <button
+                          onClick={handleProfileSave}
+                          className="bg-green-600 px-5 py-2 rounded-xl"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -301,13 +308,7 @@ cursor-pointer
             {/* Stats */}
 
             <div className="grid md:grid-cols-3 gap-6">
-              <div
-                className="
-bg-[#0f172a]/80
-p-6
-rounded-2xl
-"
-              >
+              <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
                 <h3 className="text-gray-400">Total Files</h3>
 
                 <p className="text-4xl font-bold text-indigo-400">
@@ -315,13 +316,7 @@ rounded-2xl
                 </p>
               </div>
 
-              <div
-                className="
-bg-[#0f172a]/80
-p-6
-rounded-2xl
-"
-              >
+              <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
                 <h3 className="text-gray-400">Storage Used</h3>
 
                 <p className="text-4xl font-bold text-green-400">
@@ -329,13 +324,7 @@ rounded-2xl
                 </p>
               </div>
 
-              <div
-                className="
-bg-[#0f172a]/80
-p-6
-rounded-2xl
-"
-              >
+              <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
                 <h3 className="text-gray-400">Security Score</h3>
 
                 <p className="text-4xl font-bold text-yellow-400">95%</p>
@@ -344,13 +333,7 @@ rounded-2xl
 
             {/* Security Card */}
 
-            <div
-              className="
-bg-[#0f172a]/80
-p-6
-rounded-2xl
-"
-            >
+            <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
               <h2 className="text-xl font-bold mb-4">🔐 SecureX Protection</h2>
 
               <div className="space-y-3 text-gray-300">
@@ -365,71 +348,145 @@ rounded-2xl
             </div>
 
             {/* Edit */}
-
-            {editMode && (
-              <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
-                <input
-                  className="
-w-full
-p-3
-bg-black
-border
-rounded-xl
-mb-3
-"
-                  value={profileData.name}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      name: e.target.value,
-                    })
-                  }
-                />
-
-                <button
-                  onClick={handleProfileSave}
-                  className="
-bg-green-600
-px-5
-py-2
-rounded-xl
-"
-                >
-                  Save
-                </button>
-              </div>
-            )}
           </div>
         )}
 
         {active === "stats" && (
           <div className="space-y-8">
-            <h2 className="text-3xl text-indigo-400">Analytics</h2>
+            {/* Header */}
+            <div>
+              <h2 className="text-3xl text-indigo-400 font-bold">
+                📊 Storage Analytics
+              </h2>
+              <p className="text-gray-400 mt-2">
+                Monitor your files, storage usage and security status
+              </p>
+            </div>
 
-            <div className="grid md:grid-cols-2 gap-10">
+            {/* Overview Cards */}
+            <div className="grid md:grid-cols-4 gap-6">
+              <StatCard
+                title="Total Files"
+                value={totalFiles}
+                color="text-indigo-400"
+              />
+
+              <StatCard
+                title="Storage Used"
+                value={`${totalSize} MB`}
+                color="text-green-400"
+              />
+
+              <StatCard
+                title="Images"
+                value={imageCount}
+                color="text-blue-400"
+              />
+
+              <StatCard
+                title="Documents"
+                value={pdfCount}
+                color="text-yellow-400"
+              />
+            </div>
+
+            {/* Storage Progress */}
+            <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
+              <div className="flex justify-between mb-3">
+                <h3 className="text-xl font-semibold">☁ Cloud Storage</h3>
+
+                <span>{storageUsedPercent}%</span>
+              </div>
+
+              <div className="w-full bg-gray-700 h-4 rounded-full">
+                <div
+                  className="bg-indigo-500 h-4 rounded-full"
+                  style={{
+                    width: `${storageUsedPercent}%`,
+                  }}
+                />
+              </div>
+
+              <p className="text-gray-400 mt-3">
+                {totalSize} MB used of 1024 MB
+              </p>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Pie Chart */}
+
               <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
-                <ResponsiveContainer width="100%" height={250}>
+                <h3 className="text-xl mb-5">📁 File Distribution</h3>
+
+                <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={pieData} dataKey="value">
-                      {pieData.map((_, i) => (
-                        <Cell key={i} fill={COLORS[i]} />
+                    <Pie data={pieData} dataKey="value" outerRadius={100} label>
+                      {pieData.map((_, index) => (
+                        <Cell key={index} fill={COLORS[index]} />
                       ))}
                     </Pie>
+
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
 
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-2xl">
-                <ResponsiveContainer width="100%" height={250}>
+              {/* Bar Chart */}
+
+              <div className="bg-[#0f172a]/80 p-6  rounded-2xl">
+                <h3 className="text-xl mb-5">📈 File Statistics</h3>
+
+                <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={barData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+
                     <XAxis dataKey="name" />
+
                     <YAxis />
+
                     <Tooltip />
+
                     <Bar dataKey="value" fill="#6366f1" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+            </div>
+
+            {/* Security Analytics */}
+
+            <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
+              <h3 className="text-xl font-bold mb-6">🔐 Security Analytics</h3>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                <SecurityCard title="Encrypted Files" value={totalFiles} />
+
+                <SecurityCard title="Encryption" value="AES-256" />
+
+                <SecurityCard title="Access Control" value="JWT" />
+              </div>
+            </div>
+
+            {/* Largest Files */}
+
+            <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
+              <h3 className="text-xl font-bold mb-5">📁 Largest Files</h3>
+
+              {[...files]
+                .sort((a, b) => b.size - a.size)
+                .slice(0, 5)
+                .map((file) => (
+                  <div
+                    key={file._id}
+                    className="flex justify-between border-b border-white/10 py-3"
+                  >
+                    <span>{file.fileName}</span>
+
+                    <span className="text-gray-400">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </span>
+                  </div>
+                ))}
             </div>
           </div>
         )}
