@@ -194,7 +194,6 @@ const Profile = () => {
         ))}
       </div>
 
-      {/* MAIN */}
       <div className="flex-1 p-6 ml-0 md:ml-64">
         <button
           onClick={() => setOpen(!open)}
@@ -203,68 +202,198 @@ const Profile = () => {
           <FaBars />
         </button>
 
-        {/* PROFILE */}
         {active === "profile" && (
-          <div className="bg-[#0f172a]/80 p-8 rounded-3xl">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                {user?.profilePic ? (
-                  <img
-                    src={user.profilePic}
-                    className="w-28 h-28 rounded-full"
-                  />
-                ) : (
-                  <div className="w-28 h-28 rounded-full bg-indigo-600 flex items-center justify-center text-3xl">
-                    {user?.email?.charAt(0)}
+          <div className="space-y-8">
+            {/* Profile Card */}
+            <div className="bg-[#0f172a]/80 rounded-3xl overflow-hidden">
+              {/* Banner */}
+              <div
+                className="
+h-40 
+bg-gradient-to-r 
+from-indigo-600 
+via-purple-600 
+to-blue-600
+"
+              ></div>
+
+              <div className="p-8">
+                <div className="flex items-center gap-6 -mt-20">
+                  {/* Avatar */}
+
+                  <div className="relative">
+                    {user?.profilePic ? (
+                      <img
+                        src={user.profilePic}
+                        className="
+w-32 h-32
+rounded-full
+border-4
+border-[#0f172a]
+"
+                      />
+                    ) : (
+                      <div
+                        className="
+w-32 h-32
+rounded-full
+bg-indigo-600
+flex
+items-center
+justify-center
+text-4xl
+border-4
+border-[#0f172a]
+"
+                      >
+                        {user?.email?.charAt(0)}
+                      </div>
+                    )}
+
+                    <input
+                      type="file"
+                      hidden
+                      id="upload"
+                      onChange={handleProfileUpload}
+                    />
+
+                    <label
+                      htmlFor="upload"
+                      className="
+absolute
+bottom-2
+right-2
+bg-indigo-600
+p-2
+rounded-full
+cursor-pointer
+"
+                    >
+                      📷
+                    </label>
                   </div>
-                )}
-                <input
-                  type="file"
-                  hidden
-                  id="upload"
-                  onChange={handleProfileUpload}
-                />
-                <label
-                  htmlFor="upload"
-                  className="absolute bottom-0 right-0 bg-indigo-600 p-2 rounded-full cursor-pointer"
-                >
-                  📷
-                </label>
-              </div>
 
-              <div>
-                <h2 className="text-3xl">{user?.name}</h2>
-                <p className="text-gray-400">{user?.email}</p>
+                  <div className="mt-16">
+                    <h2 className="text-3xl font-bold">{user?.name}</h2>
 
-                <div className="flex gap-3 mt-4">
-                  <button
-                    onClick={() => setEditMode(!editMode)}
-                    className="bg-indigo-600 px-4 py-2 rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-600 px-4 py-2 rounded"
-                  >
-                    Logout
-                  </button>
+                    <p className="text-gray-400">{user?.email}</p>
+
+                    <div className="flex gap-3 mt-4">
+                      <button
+                        onClick={() => setEditMode(!editMode)}
+                        className="bg-indigo-600 px-5 py-2 rounded-xl"
+                      >
+                        Edit Profile
+                      </button>
+
+                      <button
+                        onClick={handleLogout}
+                        className="bg-red-600 px-5 py-2 rounded-xl"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Stats */}
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <div
+                className="
+bg-[#0f172a]/80
+p-6
+rounded-2xl
+"
+              >
+                <h3 className="text-gray-400">Total Files</h3>
+
+                <p className="text-4xl font-bold text-indigo-400">
+                  {totalFiles}
+                </p>
+              </div>
+
+              <div
+                className="
+bg-[#0f172a]/80
+p-6
+rounded-2xl
+"
+              >
+                <h3 className="text-gray-400">Storage Used</h3>
+
+                <p className="text-4xl font-bold text-green-400">
+                  {totalSize} MB
+                </p>
+              </div>
+
+              <div
+                className="
+bg-[#0f172a]/80
+p-6
+rounded-2xl
+"
+              >
+                <h3 className="text-gray-400">Security Score</h3>
+
+                <p className="text-4xl font-bold text-yellow-400">95%</p>
+              </div>
+            </div>
+
+            {/* Security Card */}
+
+            <div
+              className="
+bg-[#0f172a]/80
+p-6
+rounded-2xl
+"
+            >
+              <h2 className="text-xl font-bold mb-4">🔐 SecureX Protection</h2>
+
+              <div className="space-y-3 text-gray-300">
+                <p>✅ AES File Encryption</p>
+
+                <p>✅ JWT Authentication</p>
+
+                <p>✅ Cloudinary Secure Storage</p>
+
+                <p>✅ Protected File Access</p>
+              </div>
+            </div>
+
+            {/* Edit */}
+
             {editMode && (
-              <div className="mt-6">
+              <div className="bg-[#0f172a]/80 p-6 rounded-2xl">
                 <input
-                  className="w-full p-2 mb-3 bg-black border rounded"
+                  className="
+w-full
+p-3
+bg-black
+border
+rounded-xl
+mb-3
+"
                   value={profileData.name}
                   onChange={(e) =>
-                    setProfileData({ ...profileData, name: e.target.value })
+                    setProfileData({
+                      ...profileData,
+                      name: e.target.value,
+                    })
                   }
                 />
+
                 <button
                   onClick={handleProfileSave}
-                  className="bg-green-600 px-4 py-2 rounded"
+                  className="
+bg-green-600
+px-5
+py-2
+rounded-xl
+"
                 >
                   Save
                 </button>
