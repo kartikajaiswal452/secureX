@@ -490,34 +490,253 @@ const Profile = () => {
             </div>
           </div>
         )}
-
         {active === "security" && (
-          <div className="space-y-6">
-            <h2 className="text-3xl text-indigo-400">Security</h2>
+          <div className="space-y-8">
+            {/* Header */}
+            <div>
+              <h2 className="text-3xl font-bold text-indigo-400">
+                🔐 Security Center
+              </h2>
 
-            <input
-              type="password"
-              placeholder="New Password"
-              className="w-full p-3 bg-black border rounded"
-            />
-            <button className="bg-indigo-600 px-5 py-2 rounded">Update</button>
+              <p className="text-gray-400 mt-2">
+                Manage your account security and protection settings
+              </p>
+            </div>
 
-            <button className="bg-red-600 px-5 py-2 rounded">Logout All</button>
+            {/* Security Score */}
+
+            <div className="bg-[#0f172a]/80 p-6 rounded-3xl  border border-white/10">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-semibold">Security Score</h3>
+
+                  <p className="text-gray-400">Your account protection level</p>
+                </div>
+
+                <div className="w-24 h-24  rounded-full bg-green-500/20  flex items-center justify-center border-4 border-green-500">
+                  <span className="text-3xl font-bold text-green-400">95%</span>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex justify-between">
+                  <span>🔒 AES-256 Encryption</span>
+
+                  <span className="text-green-400">Active</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>🔑 JWT Authentication</span>
+
+                  <span className="text-green-400">Active</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>☁ Cloudinary Storage</span>
+
+                  <span className="text-green-400">Protected</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Change Password */}
+
+            <div className="bg-[#0f172a]/80 p-6 rounded-3xl border border-white/10">
+              <h3 className="text-xl font-bold mb-5">🔑 Change Password</h3>
+
+              <div className="space-y-4">
+                <input
+                  type="password"
+                  placeholder="Current Password"
+                  className="w-full p-3 bg-black border border-white/10 rounded-xl"
+                />
+
+                <input
+                  type="password"
+                  placeholder="New Password"
+                  className="w-full p-3 bg-black border border-white/10 rounded-xl"
+                />
+
+                <input
+                  type="password"
+                  placeholder="Confirm New Password"
+                  className="w-full p-3 bg-black border border-white/10 rounded-xl"
+                />
+
+                <button className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition">
+                  Update Password
+                </button>
+              </div>
+            </div>
+
+            {/* Two Factor Authentication */}
+
+            <div className="bg-[#0f172a]/80 p-6 rounded-3xl border border-white/10">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-bold">
+                    📱 Two Factor Authentication
+                  </h3>
+
+                  <p className="text-gray-400">
+                    Add extra protection to your account
+                  </p>
+                </div>
+
+                <button className="bg-green-600 px-5 py-2 rounded-xl">
+                  Enable
+                </button>
+              </div>
+            </div>
+
+            {/* Active Sessions */}
+
+            <div className="bg-[#0f172a]/80 p-6 rounded-3xl border border-white/10">
+              <h3 className="text-xl font-bold mb-5">🌍 Active Sessions</h3>
+
+              <div className="flex justify-between items-center bg-black/30 p-4 rounded-xl">
+                <div>
+                  <p>💻 Windows Chrome</p>
+
+                  <span className="text-gray-400 text-sm">Current Session</span>
+                </div>
+
+                <span className="text-green-400">Online</span>
+              </div>
+            </div>
+
+            {/* Danger Zone */}
+
+            <div className="bg-red-950/30  border border-red-500/30 p-6 rounded-3xl">
+              <h3 className="text-xl font-bold text-red-400">⚠ Danger Zone</h3>
+
+              <p className="text-gray-400 mt-2">
+                Logout from all devices and revoke sessions
+              </p>
+
+              <button className=" mt-5 bg-red-600 px-6  py-3 rounded-xl hover:bg-red-700">
+                Logout All Devices
+              </button>
+            </div>
           </div>
         )}
-
         {active === "activity" && (
-          <div>
-            <h2 className="text-3xl text-indigo-400 mb-4">Activity</h2>
+          <div className="space-y-8">
+            {/* Header */}
+            <div>
+              <h2 className="text-3xl font-bold text-indigo-400">
+                📜 Activity Center
+              </h2>
 
-            {files.slice(0, 5).map((file, i) => (
-              <div key={i} className="flex justify-between border-b py-2">
-                <span>{file.fileName}</span>
-                <span className="text-gray-400">
-                  {(file.size / 1024).toFixed(1)} KB
-                </span>
+              <p className="text-gray-400 mt-2">
+                Track your recent file activities and security events
+              </p>
+            </div>
+
+            {/* Activity Overview */}
+            <div className="grid md:grid-cols-4 gap-6">
+              <StatCard
+                title="Total Uploads"
+                value={totalFiles}
+                color="text-indigo-400"
+              />
+
+              <StatCard
+                title="Encrypted Files"
+                value={totalFiles}
+                color="text-green-400"
+              />
+
+              <StatCard
+                title="Storage Used"
+                value={`${totalSize} MB`}
+                color="text-yellow-400"
+              />
+
+              <StatCard
+                title="Security"
+                value="Protected"
+                color="text-blue-400"
+              />
+            </div>
+
+            {/* Timeline */}
+            <div className="bg-[#0f172a]/80 p-6 rounded-3xl border border-white/10">
+              <h3 className="text-xl font-bold mb-6">🕒 Recent Activities</h3>
+
+              <div className="space-y-5">
+                {files.slice(0, 8).map((file, index) => (
+                  <div
+                    key={file._id || index}
+                    className="
+              flex
+              items-center
+              justify-between
+              bg-black/30
+              p-4
+              rounded-xl
+              border
+              border-white/5
+              hover:bg-white/5
+              transition
+            "
+                  >
+                    {/* Left Section */}
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-indigo-600/20 flex items-center  justify-center text-2xl">
+                        {file.fileName.match(/\.(jpg|png|jpeg)$/i)
+                          ? "🖼️"
+                          : file.fileName.match(/\.pdf$/i)
+                            ? "📄"
+                            : file.fileName.match(/\.(mp4|mkv)$/i)
+                              ? "🎥"
+                              : "📁"}
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold">{file.fileName}</h4>
+
+                        <p className="text-gray-400 text-sm">
+                          Uploaded recently • {(file.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right Section */}
+                    <div className="text-right">
+                      <p className="text-green-400">🔐 Encrypted</p>
+
+                      <p className="text-gray-400 text-sm">☁ Cloud Storage</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Security Logs */}
+            <div className="bg-[#0f172a]/80 p-6 rounded-3xl border border-white/10">
+              <h3 className="text-xl font-bold mb-5">🔐 Security Logs</h3>
+
+              <div className="space-y-4">
+                <div className="flex justify-between p-4 bg-black/30 rounded-xl">
+                  <span>🔑 User Login</span>
+
+                  <span className="text-green-400">Successful</span>
+                </div>
+
+                <div className="flex justify-between p-4 bg-black/30 rounded-xl">
+                  <span>🛡 File Encryption</span>
+
+                  <span className="text-green-400">AES-256</span>
+                </div>
+
+                <div className="flex justify-between p-4 bg-black/30 rounded-xl">
+                  <span>☁ Cloud Upload</span>
+
+                  <span className="text-blue-400">Cloudinary</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
